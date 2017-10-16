@@ -1,7 +1,7 @@
-function Tank(id, owner, position) {
+function Tank(id, x, y) {
     this.id = id;
-    this.owner = owner;
-    this.position = position;
+    this.x = x;
+    this.y = y;
 }
 
 

@@ -4,8 +4,14 @@ const io = require('socket.io')(http);
 const Entity = require('./entity');
 const PlayerConnection = require('./PlayerConnection');
 const GameWorld = require('./GameWorld');
-
 const world = new GameWorld();
+
+const config = {
+    network: {
+        tickFrequency: 200
+    }
+};
+
 let playerConnections = [];
 
 app.get('/', (req, res) => {
@@ -13,11 +19,12 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    // console.log(PlayerConnection);
     let pc = new PlayerConnection(socket);
-    socket.playerConnection = pc;
-    socket.playerConnection.player = new Entity.Tank();
     playerConnections.push(pc);
+    socket.playerConnection = pc;
+
+
+    socket.playerConnection.player = world.createTank();
 
     socket.on('disconnect', () => {
         pc.disconnected();
@@ -42,15 +49,11 @@ function processMove(playerConnection, move) {
 function broadcastState() {
     playerConnections.forEach(function(pc) {
         pc.socket.emit('tick', {
-            state: {
-                name: 'joe',
-                x: 35,
-                y: 49.33
-            }
+            state: world.getWorldSurrounding(pc.player)
         })
     });
     setTimeout(() => {
         broadcastState();
-    }, 100)
+    }, config.network.tickFrequency)
 }
 broadcastState();
