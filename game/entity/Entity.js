@@ -8,9 +8,9 @@ function Entity(uuid, x, y, radius) {
 }
 
 Entity.prototype.checkCollision = function(otherEntity) {
-    let distanceSquared = (x - otherEntity.x)^2 + (y - otherEntity.y)^2;
-    let radiusSumSquared = (radius + this.radius)^2;
-
+    let distanceSquared = (this.x - otherEntity.x)^2 + (this.y - otherEntity.y)^2;
+    let radiusSumSquared = (this.radius + this.radius)^2;
+    console.log("Entity is checking collision");
     return distanceSquared < radiusSumSquared;
 };
 
