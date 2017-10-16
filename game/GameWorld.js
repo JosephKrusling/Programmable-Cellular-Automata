@@ -8,6 +8,11 @@ function GameWorld() {
         width: 1000,
         height: 10000
     }
+    this.food = [];
+    for (let i = 0; i < 100; i++)
+    {
+        this.food.push(this.createRandomFood());
+    }
 }
 
 GameWorld.prototype.createTank = function() {
@@ -36,6 +41,12 @@ GameWorld.prototype.getGoodSpawnPoint = function() {
         x: Math.random() * this.dimensions.width,
         y: Math.random() * this.dimensions.height
     };
+};
+
+// get a new food object with random coordinates
+GameWorld.prototype.createRandomFood = function()
+{
+  return new Entity.Food(Math.random(), Math.random());
 };
 
 module.exports = GameWorld;

@@ -1,4 +1,5 @@
 module.exports = {
     Tank: require('./Tank'),
-    Bullet: require('./Bullet')
+    Bullet: require('./Bullet'),
+    Food: require('./Food')
 };
