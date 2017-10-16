@@ -1,9 +1,8 @@
+const Entity = require('./Entity');
 
-function Bullet(x, y) {
-
-    this.x = x;
-    this.y = y;
-    this.size = 1;
+function Bullet(uuid, x, y, radius)
+{
+    Entity.apply(arguments);
 }
 
 Buttet.prototype.getPosition = function(){
