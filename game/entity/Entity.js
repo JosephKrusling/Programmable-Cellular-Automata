@@ -3,6 +3,7 @@ function Entity(uuid, x, y, radius) {
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this.timeCreated = Date.now();
     console.log('hi im entity and im an alcoholic');
 }
 

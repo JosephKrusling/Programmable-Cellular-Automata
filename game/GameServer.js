@@ -54,6 +54,9 @@ function processMove(playerConnection, move) {
 }
 
 function update() {
+    // Update the game world.
+    world.update();
+
 
     // Broadcast the state to all the players.
     playerConnections.forEach(function(pc) {

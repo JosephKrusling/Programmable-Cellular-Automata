@@ -18,12 +18,18 @@ function GameWorld() {
     }
 }
 
+// TODO: THIS IS FUCKING AWFUL O(n^2) AND WILL DESTROY OUR LIVES
+// USE QUADTREE FOR FUCKS SAKE YOU MANIAC
 GameWorld.prototype.update = function () {
-    this.tanks.forEach(function(tank) {
-       this.bullets.forEach(function(bullet) {
-           console.log('collision test');
-       })
-    });
+    if (this.tanks === undefined || this.bullets === undefined)
+        return;
+    for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
+        for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
+            let tank = this.tanks[tankIndex];
+            let result = tank.checkCollision(tank);
+            console.log(result);
+        }
+    }
 };
 
 GameWorld.prototype.createTank = function() {
