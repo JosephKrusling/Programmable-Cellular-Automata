@@ -3,7 +3,10 @@
 // You have 100ms to do all of your calculations.
 
 function processGameTick() {
-    return state;
+    return {
+        command: 'shoot',
+        direction: 180
+    };
 }
 
 processGameTick();

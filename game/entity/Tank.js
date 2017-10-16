@@ -1,12 +1,7 @@
-// a tank is equivalent to a player
+const Entity = require('./Entity');
 
-// An instance of a player
-function Tank(id, x, y) {
-    this.id = id;
-    this.x = x;
-    this.y = y;
-    this.size = 5; // maybe configurable in the future? will tanks grow like agario thingies?
-    this.health = 10; // setting default health to 10 arbitrarily [said tanner on Mon, Oct 16, 2017 at T15:52:16 -5:00]
+function Tank(uuid, x, y, radius) {
+    Entity.apply(arguments); // if this works.....
 }
 
 // returns the health value of this tank

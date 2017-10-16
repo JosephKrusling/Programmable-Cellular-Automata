@@ -32,8 +32,8 @@ io.on('connection', (socket) => {
     socket.on('scriptError', (error) => {
         console.log('we got a problem boss');
     });
-    socket.on('action', (move) => {
-        processMove(pc, move);
+    socket.on('action', (packet) => {
+        processMove(pc, packet.desiredMove);
     })
 });
 
@@ -42,18 +42,30 @@ http.listen(3000, () => {
 });
 
 function processMove(playerConnection, move) {
-    console.log('got a move:');
-    console.log(move);
+    switch (move.command) {
+        case 'shoot':
+            world.spawnBullet(playerConnection.player, move.direction);
+            break;
+        default:
+            console.log('Unrecognized Move.')
+            console.log(JSON.stringify(move));
+
+    }
 }
 
-function broadcastState() {
+function update() {
+
+    // Broadcast the state to all the players.
     playerConnections.forEach(function(pc) {
         pc.socket.emit('tick', {
             state: world.getWorldSurrounding(pc.player)
         })
     });
+
+
+    // Schedule update() to run again.
     setTimeout(() => {
-        broadcastState();
+        update();
     }, config.network.tickFrequency)
 }
-broadcastState();
+update();
