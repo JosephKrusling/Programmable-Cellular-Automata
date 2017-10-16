@@ -8,7 +8,7 @@ socket.on('connect', () => {
     console.log('we connected!');
 });
 
-let scriptSource = fs.readFileSync('./scriptRunner/example.js', {encoding: 'utf8'});
+let scriptSource = fs.readFileSync('./example.js', {encoding: 'utf8'});
 
 socket.on('tick', (arg) => {
     console.log(arg);
@@ -22,8 +22,14 @@ socket.on('tick', (arg) => {
 
 
     try {
+        let packet = {};
+        let startTime = process.hrtime();
         let scriptResult = vm.run(scriptSource);
-        socket.emit('requestMove', scriptResult);
+
+        packet.executionTime = process.hrtime(startTime)[1]/1000000; // milliseconds
+        packet.desiredMove = scriptResult;
+
+        socket.emit('action', packet);
     } catch(e) {
         socket.emit('scriptError', e);
     }

@@ -3,7 +3,7 @@
 // You have 100ms to do all of your calculations.
 
 function processGameTick() {
-    return 'hi';
+    return state;
 }
 
 processGameTick();

@@ -1,3 +1,6 @@
 
+function Bullet() {
 
-function Bullet()
+}
+
+module.exports = Bullet;
