@@ -7,7 +7,10 @@ function Entity(uuid, x, y, radius) {
 }
 
 Entity.prototype.checkCollision = function(otherEntity) {
-    return true;
+    let distanceSquared = (x - otherEntity.x)^2 + (y - otherEntity.y)^2;
+    let radiusSumSquared = (radius + this.radius)^2;
+
+    return distanceSquared < radiusSumSquared;
 };
 
 module.exports = Entity;
