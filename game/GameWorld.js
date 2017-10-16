@@ -10,11 +10,16 @@ function GameWorld() {
     this.dimensions = {
         width: 1000,
         height: 10000
-    }
+    };
     this.food = [];
     for (let i = 0; i < 100; i++)
     {
         this.food.push(this.createRandomFood());
+    }
+
+    for (let i = 0; i < 5; i++)
+    {
+        this.createTank(); // createTank function pushes to the tank list automatically
     }
 }
 
@@ -26,30 +31,39 @@ GameWorld.prototype.update = function () {
     for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
         for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
             let tank = this.tanks[tankIndex];
-            let result = tank.checkCollision(tank);
-            console.log(result);
+            let bullet = this.bullets[bulletIndex];
+            let result = tank.checkCollision(bullet);
+            if(result === true) {
+                console.log("Collided!");
+            }
         }
     }
 };
 
 GameWorld.prototype.createTank = function() {
-    let spawnPoint = this.getGoodSpawnPoint();
-    let newTank = new Entity.Tank(
-        getNextTankIndex(),
-        spawnPoint.x,
-        spawnPoint.y
-    );
-    this.tanks.push(newTank);
-    return newTank;
+    // let spawnPoint = this.getGoodSpawnPoint();
+    // let newTank = new Entity.Tank(
+    //     uuid: getNextTankIndex(),
+    //     spawnPoint.x,
+    //     spawnPoint.y
+    // );
+    let spawn = this.getGoodSpawnPoint();
+    let tank = new Entity.Tank();
+    tank.uuid = getNextTankIndex();
+    tank.x= spawn.x;
+    tank.y = spawn.y;
+    tank.radius = 10;
+    // this.tanks.push(newTank);
+    this.tanks.push(tank);
+    return tank;
 };
 
 GameWorld.prototype.spawnBullet = function(owner, direction) {
-    bullet = {
-        x: owner.x,
-        y: owner.y,
-        direction: direction,
-        creationTime: Date.now()
-    };
+    let bullet = new Entity.Bullet();
+    bullet.x = owner.x;
+    bullet.y = owner.y;
+    bullet.direction = direction;
+    bullet.creationTime = Date.now();
     this.bullets.push(bullet);
     console.log('bullet spawned')
 };

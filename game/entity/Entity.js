@@ -7,10 +7,11 @@ function Entity(uuid, x, y, radius) {
     console.log('hi im entity and im an alcoholic');
 }
 
+// returns true if a collision has been detected, otherwise false
 Entity.prototype.checkCollision = function(otherEntity) {
     let distanceSquared = (this.x - otherEntity.x)^2 + (this.y - otherEntity.y)^2;
     let radiusSumSquared = (this.radius + this.radius)^2;
-    console.log("Entity is checking collision");
+    //console.log("Entity is checking collision");
     return distanceSquared < radiusSumSquared;
 };
 
