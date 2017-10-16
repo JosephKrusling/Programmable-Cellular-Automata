@@ -62,6 +62,7 @@ GameWorld.prototype.spawnBullet = function(owner, direction) {
     let bullet = new Entity.Bullet();
     bullet.x = owner.x;
     bullet.y = owner.y;
+    bullet.radius = 2;
     bullet.direction = direction;
     bullet.creationTime = Date.now();
     this.bullets.push(bullet);

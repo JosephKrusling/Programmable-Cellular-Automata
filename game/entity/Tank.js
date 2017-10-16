@@ -20,7 +20,7 @@ Tank.prototype.getPosition = function(){
 };
 
 Tank.prototype.checkCollision = function(otherEntity){
-    return Entity.prototype.checkCollision(otherEntity);
+    return Entity.prototype.checkCollision(this, otherEntity);
 }
 
 module.exports = Tank;
