@@ -45,6 +45,11 @@ http.listen(3000, () => {
 });
 
 function update() {
+    // Schedule update() to run again.
+    setTimeout(() => {
+        update();
+    }, config.network.tickFrequency)
+
     // Update the game world.
     world.update();
 
@@ -55,11 +60,5 @@ function update() {
             state: world.getWorldSurrounding(pc.player)
         })
     });
-
-
-    // Schedule update() to run again.
-    setTimeout(() => {
-        update();
-    }, config.network.tickFrequency)
 }
 update();
