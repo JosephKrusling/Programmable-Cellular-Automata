@@ -24,8 +24,26 @@ GameWorld.prototype.update = function () {
         return;
 
     // Process player moves
+    let playersThatMoved = 0;
     for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
+        let tank = this.tanks[tankIndex];
+        let desiredMove = tank.desiredMove;
+        if (desiredMove) {
+            playersThatMoved++;
 
+            switch (desiredMove.command) {
+                case 'move':
+                    break;
+
+                case 'shoot':
+                    this.spawnBullet(tank, desiredMove.direction);
+                    break;
+            }
+
+            // console.log(desiredMove);
+
+            tank.desiredMove = null;
+        }
     }
 
     // Check for collision between tanks and bullets. VERY INEFFICIENT.
@@ -56,7 +74,7 @@ GameWorld.prototype.update = function () {
     let updatePeriod = Date.now() - this.lastUpdate;
     this.lastUpdate = Date.now();
 
-    console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions`);
+    console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions, ${playersThatMoved}/${this.tanks.length} Moved`);
 };
 
 GameWorld.prototype.createTank = function() {
@@ -65,6 +83,10 @@ GameWorld.prototype.createTank = function() {
 
     this.tanks.push(tank);
     return tank;
+};
+
+GameWorld.prototype.deleteTank = function (tank) {
+    this.tanks.splice(this.tanks.indexOf(tank), 1);
 };
 
 GameWorld.prototype.spawnBullet = function(owner, direction) {

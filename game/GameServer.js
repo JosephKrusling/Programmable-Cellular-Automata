@@ -28,6 +28,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         pc.disconnected();
+        world.deleteTank(pc.player);
     });
     socket.on('scriptError', (error) => {
         console.log(`Script error: ${error}`);
