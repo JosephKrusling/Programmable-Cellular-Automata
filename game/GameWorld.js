@@ -1,17 +1,24 @@
 const Entity = require('./entity');
 const Quadtree = require('./util/Quadtree');
 
-let lastTankIndex = 0;
-
 function GameWorld() {
     this.tanks = [];
     this.bullets = [];
     this.food = [];
     this.dimensions = {
         width: 1000,
-        height: 10000
+        height: 1000
     };
     this.food = [];
+    this.config = {
+        tanks: {
+            maximumSpeed: 10
+        },
+        vision: {
+            maximumDistance: 100
+        }
+    };
+
     this.lastUpdate = Date.now();
     for (let i = 0; i < 100; i++)
     {
@@ -95,10 +102,42 @@ GameWorld.prototype.spawnBullet = function(owner, direction) {
 };
 
 GameWorld.prototype.getWorldSurrounding = function(player) {
-    return {
-        tanks: this.tanks,
-        bullets: this.bullets
+    let state = {
+        myTank: player,
+        tanks: [],
+        bullets: []
+    };
+
+    // Add nearby tanks
+    for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
+        let tank = this.tanks[tankIndex];
+
+        if (tank) {
+            if (tank === player) {
+                continue;
+            }
+            let distance2 = player.distance2(tank);
+            let maxdist2 = this.config.vision.maximumDistance^2;
+            if (distance2 < maxdist2) {
+                state.tanks.push(tank)
+            }
+        }
     }
+
+    // Add nearby bullets
+    for (let bulletIndex = 0; bulletIndex < this.tanks.length; bulletIndex++) {
+        let bullet = this.bullets[bulletIndex];
+
+        if (bullet) {
+            let distance2 = player.distance2(bullet);
+            let maxdist2 = this.config.vision.maximumDistance^2;
+            if (distance2 < maxdist2) {
+                state.bullet.push(bullet)
+            }
+        }
+    }
+
+    return state;
 };
 
 GameWorld.prototype.getGoodSpawnPoint = function() {

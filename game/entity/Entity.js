@@ -10,10 +10,14 @@ Entity.prototype.getAge = function() {
 };
 
 Entity.prototype.checkCollision = function(otherEntity) {
-    let distanceSquared = Math.abs((this.x - otherEntity.x)^2 + (this.y - otherEntity.y)^2);
+    let distanceSquared = this.distance2(otherEntity);
     let radiusSumSquared = (this.radius + otherEntity.radius)^2;
 
     return distanceSquared < radiusSumSquared;
+};
+
+Entity.prototype.distance2 = function(otherEntity) {
+    return Math.abs((this.x - otherEntity.x) ^ 2 + (this.y - otherEntity.y) ^ 2);
 };
 
 module.exports = Entity;
