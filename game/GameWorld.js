@@ -12,61 +12,64 @@ function GameWorld() {
         height: 10000
     };
     this.food = [];
+    this.lastUpdate = Date.now();
     for (let i = 0; i < 100; i++)
     {
         this.food.push(this.createRandomFood());
     }
-
-    for (let i = 0; i < 5; i++)
-    {
-        this.createTank(); // createTank function pushes to the tank list automatically
-    }
 }
 
-// TODO: THIS IS FUCKING AWFUL O(n^2) AND WILL DESTROY OUR LIVES
-// USE QUADTREE FOR FUCKS SAKE YOU MANIAC
 GameWorld.prototype.update = function () {
     if (this.tanks === undefined || this.bullets === undefined)
         return;
+
+    // Process player moves
+    for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
+
+    }
+
+    // Check for collision between tanks and bullets. VERY INEFFICIENT.
+    // TODO: O(n^2)
+    let collisions = 0;
     for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
         for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
             let tank = this.tanks[tankIndex];
             let bullet = this.bullets[bulletIndex];
-            let result = tank.checkCollision(bullet);
-            if(result === true) {
-                console.log("Collided!");
+            if (bullet.owner === tank) {
+                continue;
             }
+            if(tank.checkCollision(bullet)) {
+                // hit
+            }
+            collisions++;
+
         }
     }
+
+    // Clear bullets which have expired.
+    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
+        if (this.bullets[bulletIndex].getAge() > 1000) {
+            this.bullets.splice(bulletIndex, 1);
+        }
+    }
+
+    let updatePeriod = Date.now() - this.lastUpdate;
+    this.lastUpdate = Date.now();
+
+    console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions`);
 };
 
 GameWorld.prototype.createTank = function() {
-    // let spawnPoint = this.getGoodSpawnPoint();
-    // let newTank = new Entity.Tank(
-    //     uuid: getNextTankIndex(),
-    //     spawnPoint.x,
-    //     spawnPoint.y
-    // );
     let spawn = this.getGoodSpawnPoint();
-    let tank = new Entity.Tank();
-    tank.uuid = getNextTankIndex();
-    tank.x= spawn.x;
-    tank.y = spawn.y;
-    tank.radius = 10;
-    // this.tanks.push(newTank);
+    let tank = new Entity.Tank(spawn.x, spawn.y, 10);
+
     this.tanks.push(tank);
     return tank;
 };
 
 GameWorld.prototype.spawnBullet = function(owner, direction) {
-    let bullet = new Entity.Bullet();
-    bullet.x = owner.x;
-    bullet.y = owner.y;
-    bullet.radius = 2;
-    bullet.direction = direction;
-    bullet.creationTime = Date.now();
+    let bullet = new Entity.Bullet(owner.x, owner.y, 2, direction, owner);
     this.bullets.push(bullet);
-    console.log('bullet spawned')
 };
 
 GameWorld.prototype.getWorldSurrounding = function(player) {
@@ -75,11 +78,6 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
         bullets: this.bullets
     }
 };
-
-function getNextTankIndex() {
-    lastTankIndex++;
-    return lastTankIndex;
-}
 
 GameWorld.prototype.getGoodSpawnPoint = function() {
     return {

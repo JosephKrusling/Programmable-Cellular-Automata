@@ -1,8 +1,11 @@
 const Entity = require('./Entity');
 
-function Tank(uuid, x, y, radius) {
-    Entity.apply(arguments); // if this works.....
+function Tank(x, y, radius) {
+    Entity.call(this, x, y, radius);
+    this.desiredMove = {};
 }
+
+Tank.prototype = Object.create(Entity.prototype);
 
 // returns the health value of this tank
 Tank.prototype.getHealth = function (){
@@ -18,9 +21,5 @@ Tank.prototype.getRekt = function (){
 Tank.prototype.getPosition = function(){
     return [this.x, this.y];
 };
-
-Tank.prototype.checkCollision = function(otherEntity){
-    return Entity.prototype.checkCollision(this, otherEntity);
-}
 
 module.exports = Tank;

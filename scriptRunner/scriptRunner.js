@@ -8,7 +8,7 @@ socket.on('connect', () => {
     console.log('we connected!');
 });
 
-let scriptSource = fs.readFileSync('./example.js', {encoding: 'utf8'});
+let scriptSource = fs.readFileSync('./scriptRunner/example.js', {encoding: 'utf8'});
 
 socket.on('tick', (arg) => {
     console.log(JSON.stringify(arg));

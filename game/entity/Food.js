@@ -1,8 +1,8 @@
 const Entity = require('./Entity');
 
-function Food(uuid, x, y, radius)
+function Food(x, y, radius)
 {
-    Entity.apply(arguments);
+    Entity.call(this, x, y, radius);
 }
 
 Food.prototype.getPosition = function(){

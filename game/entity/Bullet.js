@@ -1,8 +1,12 @@
 const Entity = require('./Entity');
 
-function Bullet(uuid, x, y, radius)
+function Bullet(x, y, radius, direction, owner)
 {
-    Entity.apply(arguments);
+    Entity.call(this, x, y, radius);
+    this.direction = direction;
+    this.owner = owner;
 }
+
+Bullet.prototype = Object.create(Entity.prototype);
 
 module.exports = Bullet;

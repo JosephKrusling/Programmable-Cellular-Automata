@@ -30,28 +30,18 @@ io.on('connection', (socket) => {
         pc.disconnected();
     });
     socket.on('scriptError', (error) => {
-        console.log('we got a problem boss');
+        console.log(`Script error: ${error}`);
     });
     socket.on('action', (packet) => {
-        processMove(pc, packet.desiredMove);
+        // This desired move is processed in GameWorld.update.
+        // It will be unset after it is processed.
+        pc.player.desiredMove = packet.desiredMove;
     })
 });
 
 http.listen(3000, () => {
     console.log('listening');
 });
-
-function processMove(playerConnection, move) {
-    switch (move.command) {
-        case 'shoot':
-            world.spawnBullet(playerConnection.player, move.direction);
-            break;
-        default:
-            console.log('Unrecognized Move.')
-            console.log(JSON.stringify(move));
-
-    }
-}
 
 function update() {
     // Update the game world.
