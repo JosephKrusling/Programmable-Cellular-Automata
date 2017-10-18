@@ -6,13 +6,15 @@ function GameWorld() {
     this.bullets = [];
     this.food = [];
     this.dimensions = {
-        width: 1000,
-        height: 1000
+        width: 700,
+        height: 700
     };
     this.food = [];
     this.config = {
-        tanks: {
-            maximumSpeed: 10
+        tank: {
+            maximumSpeed: 10,
+            thrustAcceleration: 50, //pixels/s^2
+            friction: 0.9
         },
         vision: {
             maximumDistance: 100
@@ -64,11 +66,25 @@ GameWorld.prototype.update = function () {
                 console.log(tank.direction);
             }
 
-            let thrust = 'thrust' in desiredMove ? desiredMove.thrust : 0;
-            tank.xVelocity += thrust * Math.cos(tank.direction);
-            tank.yVelocity += thrust * Math.sin(tank.direction);
+            if ('thrust' in desiredMove) {
+                tank.thrust = desiredMove.thrust;
+            }
+
+            if (tank.thrust) {
+                tank.xVelocity += this.config.tank.thrustAcceleration * secSinceLastUpdate * Math.cos(tank.direction);
+                tank.yVelocity += this.config.tank.thrustAcceleration * secSinceLastUpdate * Math.sin(tank.direction);
+            }
+
             tank.x += tank.xVelocity * secSinceLastUpdate;
             tank.y += tank.yVelocity * secSinceLastUpdate;
+
+            //friction
+            tank.xVelocity *= this.config.tank.friction;
+            tank.yVelocity *= this.config.tank.friction;
+
+            tank.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
+            
+            
 
             // console.log(desiredMove);
 
@@ -137,7 +153,8 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
     let state = {
         myTank: player,
         tanks: [],
-        bullets: []
+        bullets: [],
+        coins: []
     };
 
     // Add nearby tanks
@@ -165,6 +182,19 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
             let maxdist2 = this.config.vision.maximumDistance^2;
             if (distance2 < maxdist2) {
                 state.bullets.push(bullet)
+            }
+        }
+    }
+    
+    // Add nearby coins
+    for (let coinIndex = 0; coinIndex < this.food.length; coinIndex++) {
+        let coin = this.food[coinIndex];
+
+        if (coin) {
+            let distance2 = player.distance2(coin);
+            let maxdist2 = this.config.vision.maximumDistance^2;
+            if (distance2 < maxdist2) {
+                state.coins.push(coin)
             }
         }
     }
