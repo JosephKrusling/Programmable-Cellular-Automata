@@ -3,14 +3,19 @@ const Entity = require('./Entity');
 function Tank(x, y, radius, direction, attackCooldown=5) {
     Entity.call(this, x, y, radius);
     this.direction = direction;
+    this.points = 0;
 }
 
 Tank.prototype = Object.create(Entity.prototype);
 
-// returns the health value of this tank
-Tank.prototype.getHealth = function (){
-    return this.health;
+// returns the points value of this tank
+Tank.prototype.getPoints = function (){
+    return this.points;
 };
+
+Tank.prototype.incrementPoints = function(){
+    this.points++;
+}
 
 // this tank gets hit and reduces health by 1
 Tank.prototype.getRekt = function (){

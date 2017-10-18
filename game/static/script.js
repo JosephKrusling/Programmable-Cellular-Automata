@@ -110,10 +110,13 @@ function draw() {
         ctx.fillStyle = 'rgba(0, 128, 255, 1)';
         ctx.fill();
 
-
+        // draw tank's x and y coordinates
         ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.font = '12px Arial';
-        ctx.fillText(`x:${tank.x.toFixed(1)}, y:${tank.y.toFixed(1)}`, tank.x, tank.y);
+        ctx.fillText(`x:${tank.x.toFixed(1)}, y:${tank.y.toFixed(1)}`,tank.x, tank.y);
+        ctx.fillText(`points:${tank.points}`,tank.x, tank.y+12);
+
+        // draw the tank's point value
 
     }
 

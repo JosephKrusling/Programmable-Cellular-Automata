@@ -113,7 +113,8 @@ GameWorld.prototype.update = function () {
             let coin = this.food[foodIndex];
             if (tank.checkCollision(coin)) {
                 this.food.splice(foodIndex, 1);
-            }
+                tank.incrementPoints(); // add point value because we just picked up foodzies
+        }
         }
     }
 
