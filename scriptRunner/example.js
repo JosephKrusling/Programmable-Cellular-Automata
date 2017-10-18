@@ -2,6 +2,8 @@
 // The current game state is exposed as a global variable named gameState.
 // You have 100ms to do all of your calculations.
 
+var state = getState();
+
 function processGameTick() {
     // print(state);
     let bestCoin = getNearest(state.myTank, state.coins);

@@ -12,19 +12,23 @@ let scriptSource = fs.readFileSync('./example.js', {encoding: 'utf8'});
 
 const script = new VMScript(scriptSource);
 
+let state;
+
+let vm = new VM({
+    timeout: 50,
+    sandbox: {
+        getState: function () {
+            return state;
+        },
+        print: function(text) {
+            console.log(text);
+        }
+    }
+});
+
 socket.on('tick', (arg) => {
     // console.log(JSON.stringify(arg));
-
-    let vm = new VM({
-        timeout: 50,
-        sandbox: {
-            state: arg.state,
-            print: function(text) {
-                console.log(text);
-            }
-        }
-    });
-
+    state = arg.state;
 
     try {
         let packet = {};
