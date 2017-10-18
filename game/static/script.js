@@ -58,12 +58,11 @@ function draw() {
         ctx.beginPath();
         ctx.arc(coin.x, coin.y, coin.radius, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(255, 255, 128, 1)';
+        ctx.fillStyle = coin.color;
         ctx.fill();
 
         ctx.font = '12px Arial';
         ctx.fillText(`x:${coin.x.toFixed(1)}, y:${coin.y.toFixed(1)}`, coin.x, coin.y);
-
     }
 
     for (var i = 0; i < bullets.length; i++) {
