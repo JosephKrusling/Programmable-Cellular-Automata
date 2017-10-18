@@ -13,8 +13,10 @@ function init() {
     });
 
     socket.on('stateUpdate', function(state) {
+        lastPacketReceived = Date.now();
        tanks = state.tanks;
        bullets = state.bullets;
+       console.log(JSON.stringify(bullets));
     });
 
 
@@ -42,7 +44,7 @@ function draw() {
 
     // ctx.globalCompositeOperation = 'lighter'; // make colors add
 
-    console.log(`Draw (${tanks.length} tanks) (${bullets.length} bullets)`);
+    // console.log(`Draw (${tanks.length} tanks) (${bullets.length} bullets)`);
 
     for (var i = 0; i < tanks.length; i++) {
         var orb = tanks[i];
@@ -59,10 +61,19 @@ function draw() {
     for (var i = 0; i < bullets.length; i++) {
 
         var bullet = bullets[i];
+        // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
         ctx.shadowColor = 'rgba(255, 0, 0, 1)';
         ctx.beginPath();
-        ctx.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
+
+        // Interpolate to find estimated x of bullet.
+        var timeAdvanced = (Date.now() - lastPacketReceived) / 1000;
+        // console.log(timeAdvanced);
+        var deltaX = timeAdvanced * bullet.speed * Math.cos(bullet.direction);
+        var deltaY = timeAdvanced * bullet.speed * Math.sin(bullet.direction);
+
+
+        ctx.arc(bullet.x + deltaX, bullet.y + deltaY, 2, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fillStyle = 'rgba(255, 64, 0, 1)';
         ctx.fill();

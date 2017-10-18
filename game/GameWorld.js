@@ -17,7 +17,7 @@ function GameWorld() {
         vision: {
             maximumDistance: 100
         },
-        bulletSpeed: 20
+        bulletSpeed: 400 // per second
     };
 
     this.lastUpdate = Date.now();
@@ -30,6 +30,22 @@ function GameWorld() {
 GameWorld.prototype.update = function () {
     if (this.tanks === undefined || this.bullets === undefined)
         return;
+
+    let sinceLastUpdate = Date.now() - this.lastUpdate;
+    this.lastUpdate = Date.now();
+
+    // Clear bullets which have expired.
+    // Move bullets.
+    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
+        let bullet = this.bullets[bulletIndex];
+        if (bullet.getAge() > 10000) {
+            this.bullets.splice(bulletIndex, 1);
+        }
+
+        let distance = bullet.speed * sinceLastUpdate / 1000;
+        bullet.x += distance * Math.cos(bullet.direction);
+        bullet.y += distance * Math.sin(bullet.direction);
+    }
 
     // Process player moves
     let playersThatMoved = 0;
@@ -44,7 +60,7 @@ GameWorld.prototype.update = function () {
                     break;
 
                 case 'shoot':
-                    this.spawnBullet(tank, desiredMove.direction);
+                    this.spawnBullet(tank, desiredMove.direction, this.config.bulletSpeed);
                     break;
             }
 
@@ -55,18 +71,7 @@ GameWorld.prototype.update = function () {
     }
 
 
-    // Clear bullets which have expired.
-    // Move bullets.
-    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
-        let bullet = this.bullets[bulletIndex];
-        if (bullet.getAge() > 1000) {
-            this.bullets.splice(bulletIndex, 1);
-        }
 
-        bullet.x += this.config.bulletSpeed * Math.cos(bullet.direction);
-        bullet.y += this.config.bulletSpeed * Math.sin(bullet.direction);
-        bullet.direction += 0.3;
-    }
 
     // Check for collision between tanks and bullets. VERY INEFFICIENT.
     // TODO: O(n^2)
@@ -86,8 +91,7 @@ GameWorld.prototype.update = function () {
         }
     }
 
-    let updatePeriod = Date.now() - this.lastUpdate;
-    this.lastUpdate = Date.now();
+
 
     // console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions, ${playersThatMoved}/${this.tanks.length} Moved`);
 };
@@ -104,8 +108,14 @@ GameWorld.prototype.deleteTank = function (tank) {
     this.tanks.splice(this.tanks.indexOf(tank), 1);
 };
 
-GameWorld.prototype.spawnBullet = function(owner, direction) {
-    let bullet = new Entity.Bullet(owner.x, owner.y, 2, direction, owner);
+GameWorld.prototype.spawnBullet = function(owner, direction, speed) {
+    let dist = owner.radius + 2;
+
+    // So that the bullet spawns on the edge of the player rather than his center
+    let x = owner.x + dist * Math.cos(direction);
+    let y = owner.y + dist * Math.sin(direction);
+
+    let bullet = new Entity.Bullet(x, y, 2, direction, speed, owner);
     this.bullets.push(bullet);
 };
 
