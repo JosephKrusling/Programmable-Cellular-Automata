@@ -11,7 +11,7 @@ socket.on('connect', () => {
 let scriptSource = fs.readFileSync('./scriptRunner/example.js', {encoding: 'utf8'});
 
 socket.on('tick', (arg) => {
-    console.log(JSON.stringify(arg));
+    // console.log(JSON.stringify(arg));
 
     let vm = new VM({
         timeout: 100,

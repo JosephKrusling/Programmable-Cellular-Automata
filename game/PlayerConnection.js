@@ -1,6 +1,6 @@
 function PlayerConnection(socket) {
     this.socket = socket;
-    console.log('hey!');
+    console.log('a player connected');
 }
 
 PlayerConnection.prototype.disconnected = function() {

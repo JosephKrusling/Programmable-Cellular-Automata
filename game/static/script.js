@@ -14,8 +14,10 @@ function init() {
 
     socket.on('stateUpdate', function(state) {
         lastPacketReceived = Date.now();
-       tanks = state.tanks;
-       bullets = state.bullets;
+        tanks = state.tanks;
+        bullets = state.bullets;
+        coins = state.coins;
+
        // console.log(JSON.stringify(bullets));
     });
 
@@ -31,6 +33,7 @@ function init() {
 
     tanks = [];
     bullets = [];
+    coins = [];
 
 
     // Start 'er up.
@@ -46,12 +49,24 @@ function draw() {
 
     // console.log(`Draw (${tanks.length} tanks) (${bullets.length} bullets)`);
 
-    for (var i = 0; i < bullets.length; i++) {
+    for (var i = 0; i < coins.length; i++) {
 
+        var coin = coins[i];
+        // console.log(JSON.stringify(bullet));
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(255, 255, 0, 1)';
+        ctx.beginPath();
+        ctx.arc(coin.x, coin.y, coin.radius, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(255, 255, 0, 1)';
+        ctx.fill();
+    }
+
+    for (var i = 0; i < bullets.length; i++) {
         var bullet = bullets[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = 'rgba(0, 255, 0, 1)';
+        ctx.shadowColor = 'rgba(255, 0, 0, 1)';
         ctx.beginPath();
 
         // Interpolate to find estimated x of bullet.
@@ -61,9 +76,9 @@ function draw() {
         var deltaY = timeAdvanced * bullet.speed * Math.sin(bullet.direction);
 
 
-        ctx.arc(bullet.x + deltaX, bullet.y + deltaY, 2, 0, 2 * Math.PI);
+        ctx.arc(bullet.x + deltaX, bullet.y + deltaY, bullet.radius, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 255, 0, 1)';
+        ctx.fillStyle = 'rgba(255, 0, 0, 1)';
         ctx.fill();
     }
 

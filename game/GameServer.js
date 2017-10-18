@@ -92,7 +92,8 @@ function update() {
     viewerConnections.forEach(function(vc) {
         vc.socket.emit('stateUpdate', {
             tanks: world.tanks,
-            bullets: world.bullets
+            bullets: world.bullets,
+            coins: world.food
         })
     });
 }

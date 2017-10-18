@@ -4,8 +4,10 @@
 
 function processGameTick() {
     return {
-        command: 'shoot',
-        direction: Math.random() * 2 * Math.PI
+        // direction: state.myTank.direction + 0.1,
+        direction: 0,
+        thrust: 0.55,
+        shoot: true
     };
 }
 

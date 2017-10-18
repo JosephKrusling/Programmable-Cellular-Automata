@@ -17,7 +17,10 @@ function GameWorld() {
         vision: {
             maximumDistance: 100
         },
-        bulletSpeed: 400 // per second
+        bullet: {
+            speed: 800, // per second
+            radius: 5
+        }
     };
 
     this.lastUpdate = Date.now();
@@ -31,7 +34,8 @@ GameWorld.prototype.update = function () {
     if (this.tanks === undefined || this.bullets === undefined)
         return;
 
-    let sinceLastUpdate = Date.now() - this.lastUpdate;
+    let msSinceLastUpdate = Date.now() - this.lastUpdate;
+    let secSinceLastUpdate = msSinceLastUpdate/1000;
     this.lastUpdate = Date.now();
 
     // Clear bullets which have expired.
@@ -42,7 +46,7 @@ GameWorld.prototype.update = function () {
             this.bullets.splice(bulletIndex, 1);
         }
 
-        let distance = bullet.speed * sinceLastUpdate / 1000;
+        let distance = bullet.speed * msSinceLastUpdate / 1000;
         bullet.x += distance * Math.cos(bullet.direction);
         bullet.y += distance * Math.sin(bullet.direction);
     }
@@ -55,23 +59,22 @@ GameWorld.prototype.update = function () {
         if (desiredMove) {
             playersThatMoved++;
 
-            switch (desiredMove.command) {
-                case 'move':
-                    break;
-
-                case 'shoot':
-                    this.spawnBullet(tank, tank.direction, this.config.bulletSpeed);
-                    break;
+            if ('direction' in desiredMove) {
+                tank.direction = desiredMove.direction;
+                console.log(tank.direction);
             }
+
+            let thrust = 'thrust' in desiredMove ? desiredMove.thrust : 0;
+            tank.xVelocity += thrust * Math.cos(tank.direction);
+            tank.yVelocity += thrust * Math.sin(tank.direction);
+            tank.x += tank.xVelocity * secSinceLastUpdate;
+            tank.y += tank.yVelocity * secSinceLastUpdate;
 
             // console.log(desiredMove);
 
             tank.desiredMove = null;
         }
     }
-
-
-
 
     // Check for collision between tanks and bullets. VERY INEFFICIENT.
     // TODO: O(n^2)
@@ -89,6 +92,17 @@ GameWorld.prototype.update = function () {
             collisions++;
 
         }
+    }
+
+    // Make food drift
+    for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
+        let food = this.food[foodIndex];
+        food.drift(0.1, 10);
+        food.x += food.xVelocity * secSinceLastUpdate;
+        food.y += food.yVelocity * secSinceLastUpdate;
+        food.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
+        food.xVelocity *= 0.9; // todo this is not correct since it decays more for faster updates. fix it
+        food.yVelocity *= 0.9;
     }
 
 
@@ -109,13 +123,13 @@ GameWorld.prototype.deleteTank = function (tank) {
 };
 
 GameWorld.prototype.spawnBullet = function(owner, direction, speed) {
-    let dist = owner.radius + 2;
+    let dist = owner.radius + this.config.bullet.radius;
 
     // So that the bullet spawns on the edge of the player rather than his center
     let x = owner.x + dist * Math.cos(direction);
     let y = owner.y + dist * Math.sin(direction);
 
-    let bullet = new Entity.Bullet(x, y, 2, direction, speed, owner);
+    let bullet = new Entity.Bullet(x, y, this.config.bullet.radius, direction, speed, owner);
     this.bullets.push(bullet);
 };
 
@@ -168,7 +182,7 @@ GameWorld.prototype.getGoodSpawnPoint = function() {
 // get a new food object with random coordinates
 GameWorld.prototype.createRandomFood = function()
 {
-  return new Entity.Food(Math.random(), Math.random());
+  return new Entity.Food(Math.random() * this.dimensions.width, Math.random() * this.dimensions.height, 5);
 };
 
 module.exports = GameWorld;
