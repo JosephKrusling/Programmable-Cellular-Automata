@@ -83,7 +83,10 @@ GameWorld.prototype.update = function () {
             tank.yVelocity *= this.config.tank.friction;
 
             tank.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
-            
+
+            if ('shoot' in desiredMove) {
+                this.spawnBullet(tank, tank.direction, this.config.bullet.speed);
+            }
             
 
             // console.log(desiredMove);
