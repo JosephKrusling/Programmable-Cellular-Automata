@@ -8,8 +8,7 @@ function processGameTick() {
     // print(bestCoin);
     let targetX = bestCoin.x;
     let targetY = bestCoin.y;
-    print(`${state.coins.length} Coins`);
-    print(`TARGET: x=${targetX.toFixed(2)}, y=${targetY.toFixed(2)}`);
+    print(`TARGET: numCouns=${state.coins.length}, x=${targetX.toFixed(2)}, y=${targetY.toFixed(2)}, dist=${distance(state.myTank, bestCoin)}`);
     let direction = Math.atan2(targetY - state.myTank.y, targetX - state.myTank.x);
     return {
         direction: direction,
@@ -21,12 +20,12 @@ function processGameTick() {
 
 function getNearest(toEntity, candidateEntities) {
     let bestCandidate = null;
-    let bestDistance = 0;
+    let bestDistance = 9999999;
 
     for (let candidateIndex = 0; candidateIndex < candidateEntities.length; candidateIndex++) {
         let candidate = candidateEntities[candidateIndex];
         let dist = distance(toEntity, candidate);
-        if (dist < bestDistance || bestCandidate === null) {
+        if (dist < bestDistance) {
             bestDistance = dist;
             bestCandidate = candidate;
         }
@@ -36,9 +35,11 @@ function getNearest(toEntity, candidateEntities) {
 }
 
 function distance(entity1, entity2) {
-    // print(`entity1: ${entity1}`);
-    // print(`entity2: ${entity2}`);
-    return Math.sqrt((entity1.x - entity2.x)^2 + (entity1.y - entity2.y)^2);
+    print(`entity1: x=${entity1.x}, y=${entity1.y}`);
+    print(`entity2: x=${entity2.x}, y=${entity2.y}`);
+    let dist =  Math.sqrt(Math.pow(entity1.x - entity2.x) + Math.pow(entity1.y - entity2.y));
+    print(`dist: ${dist}`);
+    return dist;
 }
 
 processGameTick();

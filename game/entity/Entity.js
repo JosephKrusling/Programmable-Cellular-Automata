@@ -15,7 +15,7 @@ Entity.prototype.getAge = function() {
 
 Entity.prototype.checkCollision = function(otherEntity) {
     let distanceSquared = this.distance2(otherEntity);
-    let radiusSumSquared = (this.radius + otherEntity.radius)^2;
+    let radiusSumSquared = Math.pow(this.radius + otherEntity.radius, 2);
 
     return distanceSquared < radiusSumSquared;
 };

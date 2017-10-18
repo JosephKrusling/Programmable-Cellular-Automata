@@ -166,7 +166,7 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
                 continue;
             }
             let distance2 = player.distance2(tank);
-            let maxdist2 = this.config.vision.maximumDistance^2;
+            let maxdist2 = Math.pow(this.config.vision.maximumDistance, 2);
             if (distance2 < maxdist2) {
                 state.tanks.push(tank)
             }
@@ -179,7 +179,7 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
 
         if (bullet) {
             let distance2 = player.distance2(bullet);
-            let maxdist2 = this.config.vision.maximumDistance^2;
+            let maxdist2 = Math.pow(this.config.vision.maximumDistance, 2);
             if (distance2 < maxdist2) {
                 state.bullets.push(bullet)
             }
@@ -192,7 +192,7 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
 
         if (coin) {
             let distance2 = player.distance2(coin);
-            let maxdist2 = this.config.vision.maximumDistance^2;
+            let maxdist2 = Math.pow(this.config.vision.maximumDistance, 2);
             if (distance2 < maxdist2) {
                 state.coins.push(coin)
             }
