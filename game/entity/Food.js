@@ -1,6 +1,6 @@
 const Entity = require('./Entity');
 
-function Food(x, y, radius)
+function Food(x, y, radius=5)
 {
     Entity.call(this, x, y, radius);
     let colors = colorWheel(y);
