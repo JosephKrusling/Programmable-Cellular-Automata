@@ -16,7 +16,10 @@ socket.on('tick', (arg) => {
     let vm = new VM({
         timeout: 100,
         sandbox: {
-            state: arg.state
+            state: arg.state,
+            print: function(text) {
+                console.log(text);
+            }
         }
     });
 
