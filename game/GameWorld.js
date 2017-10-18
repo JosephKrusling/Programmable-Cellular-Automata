@@ -87,10 +87,11 @@ GameWorld.prototype.update = function () {
             tank.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
 
             if ('shoot' in desiredMove) {
-                this.spawnBullet(tank, tank.direction, this.config.bullet.speed);
+                if(tank.mayShoot()){
+                    this.spawnBullet(tank, tank.direction, this.config.bullet.speed);
+                    tank.startAttackCooldown();
+                }
             }
-            
-
             // console.log(desiredMove);
 
             tank.desiredMove = null;
