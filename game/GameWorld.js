@@ -1,7 +1,7 @@
 const Entity = require('./entity');
 const Quadtree = require('./util/Quadtree');
 
-const foodMax = 200;
+const foodMax = 50; // max number of foods on screen
 
 function GameWorld() {
     this.tanks = [];
@@ -89,7 +89,7 @@ GameWorld.prototype.update = function () {
             if ('shoot' in desiredMove) {
                 if(tank.mayShoot()){
                     this.spawnBullet(tank, tank.direction, this.config.bullet.speed);
-                    tank.startAttackCooldown();
+                    //tank.startAttackCooldown();
                 }
             }
             // console.log(desiredMove);
@@ -111,6 +111,12 @@ GameWorld.prototype.update = function () {
             }
             if(tank.checkCollision(bullet)) {
                 // hit
+                tank.getRekt();
+                // todo make tank that got hit respawn and drop 1/4 of its points
+                let deadPoints = Math.min(tank.getPoints()/4, foodMax/4); // don't create more than a 1/4 of the max number of foodzies
+                for (let i = 0; i < deadPoints;i++){
+                    this.food.push(new Entity.Food(tank.x + (Math.random() + 10), tank.y + (Math.random() + 10), 5));
+                }
             }
             collisions++;
         }
