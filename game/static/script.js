@@ -54,11 +54,11 @@ function draw() {
         var coin = coins[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = 'rgba(255, 255, 0, 1)';
+        ctx.shadowColor = 'rgba(255, 255, 128, 1)';
         ctx.beginPath();
         ctx.arc(coin.x, coin.y, coin.radius, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(255, 255, 0, 1)';
+        ctx.fillStyle = 'rgba(255, 255, 128, 1)';
         ctx.fill();
     }
 
