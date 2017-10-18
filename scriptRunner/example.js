@@ -37,7 +37,7 @@ function getNearest(toEntity, candidateEntities) {
 function distance(entity1, entity2) {
     print(`entity1: x=${entity1.x}, y=${entity1.y}`);
     print(`entity2: x=${entity2.x}, y=${entity2.y}`);
-    let dist =  Math.sqrt(Math.pow(entity1.x - entity2.x) + Math.pow(entity1.y - entity2.y));
+    let dist =  Math.sqrt(Math.pow(entity1.x - entity2.x, 2) + Math.pow(entity1.y - entity2.y, 2));
     print(`dist: ${dist}`);
     return dist;
 }
