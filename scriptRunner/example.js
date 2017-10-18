@@ -5,7 +5,7 @@
 function processGameTick() {
     return {
         command: 'shoot',
-        direction: 180
+        direction: Math.random() * 2 * Math.PI
     };
 }
 

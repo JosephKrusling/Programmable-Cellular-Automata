@@ -1,42 +1,67 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const Entity = require('./entity');
 const PlayerConnection = require('./PlayerConnection');
+const ViewerConnection = require('./ViewerConnection');
+
 const GameWorld = require('./GameWorld');
 const world = new GameWorld();
 
 const config = {
     network: {
-        tickFrequency: 200
+        tickFrequency: 50
     }
 };
 
 let playerConnections = [];
+let viewerConnections = [];
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/static/index.html");
-});
+app.use(express.static('static'));
+
+// app.get('/', (req, res) => {
+//     res.sendFile(__dirname + "/static/index.html");
+// });
 
 io.on('connection', (socket) => {
-    let pc = new PlayerConnection(socket);
-    playerConnections.push(pc);
-    socket.playerConnection = pc;
 
-
-    socket.playerConnection.player = world.createTank();
 
     socket.on('disconnect', () => {
-        pc.disconnected();
-        world.deleteTank(pc.player);
+        if (socket.type === 'player') {
+            socket.playerConnection.disconnected()
+            world.deleteTank(socket.playerConnection.player);
+        }
+
     });
     socket.on('scriptError', (error) => {
         console.log(`Script error: ${error}`);
     });
+    socket.on('type', (type) => {
+        if (type === 'player') {
+            socket.type = 'player';
+
+            let pc = new PlayerConnection(socket);
+            playerConnections.push(pc);
+            socket.playerConnection = pc;
+            socket.playerConnection.player = world.createTank();
+        } else if (type === 'viewer') {
+            socket.type = 'viewer';
+
+            let vc = new ViewerConnection(socket);
+            viewerConnections.push(vc);
+            socket.viewerConnection = vc;
+        } else {
+            // unknown type. who are you?
+            socket.type = 0;
+            socket.disconnect();
+            console.log(`Somebody tried to connect with unusual type ${type}`);
+        }
+    });
     socket.on('action', (packet) => {
         // This desired move is processed in GameWorld.update.
         // It will be unset after it is processed.
-        pc.player.desiredMove = packet.desiredMove;
+        socket.playerConnection.player.desiredMove = packet.desiredMove;
     })
 });
 
@@ -58,6 +83,13 @@ function update() {
     playerConnections.forEach(function(pc) {
         pc.socket.emit('tick', {
             state: world.getWorldSurrounding(pc.player)
+        })
+    });
+
+    viewerConnections.forEach(function(vc) {
+        vc.socket.emit('stateUpdate', {
+            tanks: world.tanks,
+            bullets: world.bullets
         })
     });
 }

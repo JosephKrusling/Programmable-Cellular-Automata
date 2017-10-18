@@ -5,7 +5,7 @@ const socket = require('socket.io-client')('http://localhost:3000');
 
 
 socket.on('connect', () => {
-    console.log('we connected!');
+    socket.emit('type', 'player');
 });
 
 let scriptSource = fs.readFileSync('./scriptRunner/example.js', {encoding: 'utf8'});

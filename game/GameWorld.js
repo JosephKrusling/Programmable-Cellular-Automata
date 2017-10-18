@@ -16,7 +16,8 @@ function GameWorld() {
         },
         vision: {
             maximumDistance: 100
-        }
+        },
+        bulletSpeed: 20
     };
 
     this.lastUpdate = Date.now();
@@ -53,6 +54,20 @@ GameWorld.prototype.update = function () {
         }
     }
 
+
+    // Clear bullets which have expired.
+    // Move bullets.
+    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
+        let bullet = this.bullets[bulletIndex];
+        if (bullet.getAge() > 1000) {
+            this.bullets.splice(bulletIndex, 1);
+        }
+
+        bullet.x += this.config.bulletSpeed * Math.cos(bullet.direction);
+        bullet.y += this.config.bulletSpeed * Math.sin(bullet.direction);
+        bullet.direction += 0.3;
+    }
+
     // Check for collision between tanks and bullets. VERY INEFFICIENT.
     // TODO: O(n^2)
     let collisions = 0;
@@ -71,17 +86,10 @@ GameWorld.prototype.update = function () {
         }
     }
 
-    // Clear bullets which have expired.
-    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
-        if (this.bullets[bulletIndex].getAge() > 1000) {
-            this.bullets.splice(bulletIndex, 1);
-        }
-    }
-
     let updatePeriod = Date.now() - this.lastUpdate;
     this.lastUpdate = Date.now();
 
-    console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions, ${playersThatMoved}/${this.tanks.length} Moved`);
+    // console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions, ${playersThatMoved}/${this.tanks.length} Moved`);
 };
 
 GameWorld.prototype.createTank = function() {
@@ -132,7 +140,7 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
             let distance2 = player.distance2(bullet);
             let maxdist2 = this.config.vision.maximumDistance^2;
             if (distance2 < maxdist2) {
-                state.bullet.push(bullet)
+                state.bullets.push(bullet)
             }
         }
     }
