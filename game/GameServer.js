@@ -29,8 +29,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         if (socket.type === 'player') {
-            socket.playerConnection.disconnected()
+            socket.playerConnection.disconnected();
             world.deleteTank(socket.playerConnection.player);
+        } else if (socket.type === 'viewer') {
+            socket.viewerConnection.disconnected();
+
         }
 
     });
