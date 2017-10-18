@@ -13,8 +13,8 @@ function GameWorld() {
     this.config = {
         tank: {
             maximumSpeed: 10,
-            thrustAcceleration: 50, //pixels/s^2
-            friction: 0.9
+            thrustAcceleration: 200, //pixels/s^2
+            friction: 0.8
         },
         vision: {
             maximumDistance: 10000
@@ -26,7 +26,7 @@ function GameWorld() {
     };
 
     this.lastUpdate = Date.now();
-    for (let i = 0; i < 5; i++)
+    for (let i = 0; i < 200; i++)
     {
         this.food.push(this.createRandomFood());
     }
@@ -63,7 +63,7 @@ GameWorld.prototype.update = function () {
 
             if ('direction' in desiredMove) {
                 tank.direction = desiredMove.direction;
-                console.log(tank.direction);
+                // console.log(tank.direction);
             }
 
             if ('thrust' in desiredMove) {
@@ -96,8 +96,9 @@ GameWorld.prototype.update = function () {
     // TODO: O(n^2)
     let collisions = 0;
     for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
+        let tank = this.tanks[tankIndex];
+
         for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
-            let tank = this.tanks[tankIndex];
             let bullet = this.bullets[bulletIndex];
             if (bullet.owner === tank) {
                 continue;
@@ -106,7 +107,13 @@ GameWorld.prototype.update = function () {
                 // hit
             }
             collisions++;
+        }
 
+        for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
+            let coin = this.food[foodIndex];
+            if (tank.checkCollision(coin)) {
+                this.food.splice(foodIndex, 1);
+            }
         }
     }
 

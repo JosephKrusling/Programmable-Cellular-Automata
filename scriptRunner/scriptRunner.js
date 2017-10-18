@@ -32,8 +32,10 @@ socket.on('tick', (arg) => {
         packet.executionTime = process.hrtime(startTime)[1]/1000000; // milliseconds
         packet.desiredMove = scriptResult;
 
+        // console.log(`Executed: ${packet.executionTime}`);
         socket.emit('action', packet);
     } catch(e) {
+        console.log(`OUCH: ${e}`);
         socket.emit('scriptError', e);
     }
 });

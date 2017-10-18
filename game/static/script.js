@@ -61,8 +61,8 @@ function draw() {
         ctx.fillStyle = 'rgba(255, 255, 128, 1)';
         ctx.fill();
 
-        ctx.font = '12px Arial';
-        ctx.fillText(`x:${coin.x.toFixed(1)}, y:${coin.y.toFixed(1)}`, coin.x, coin.y);
+        // ctx.font = '12px Arial';
+        // ctx.fillText(`x:${coin.x.toFixed(1)}, y:${coin.y.toFixed(1)}`, coin.x, coin.y);
 
     }
 
