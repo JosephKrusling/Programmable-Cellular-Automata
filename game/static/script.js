@@ -16,7 +16,7 @@ function init() {
         lastPacketReceived = Date.now();
        tanks = state.tanks;
        bullets = state.bullets;
-       console.log(JSON.stringify(bullets));
+       // console.log(JSON.stringify(bullets));
     });
 
 
@@ -46,24 +46,12 @@ function draw() {
 
     // console.log(`Draw (${tanks.length} tanks) (${bullets.length} bullets)`);
 
-    for (var i = 0; i < tanks.length; i++) {
-        var orb = tanks[i];
-
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = 'rgba(0, 0, 255, 1)';
-        ctx.beginPath();
-        ctx.arc(orb.x, orb.y, 10, 0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 128, 255, 1)';
-        ctx.fill();
-    }
-
     for (var i = 0; i < bullets.length; i++) {
 
         var bullet = bullets[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = 'rgba(255, 0, 0, 1)';
+        ctx.shadowColor = 'rgba(0, 255, 0, 1)';
         ctx.beginPath();
 
         // Interpolate to find estimated x of bullet.
@@ -75,9 +63,36 @@ function draw() {
 
         ctx.arc(bullet.x + deltaX, bullet.y + deltaY, 2, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(255, 64, 0, 1)';
+        ctx.fillStyle = 'rgba(0, 255, 0, 1)';
         ctx.fill();
     }
+
+    for (var i = 0; i < tanks.length; i++) {
+        var tank = tanks[i];
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(0, 0, 255, 1)';
+
+        // Advanced beak math
+        // DON'T TRY THIS AT HOME KIDS
+        let beakLength = 2.0;
+        let beakAngle = Math.PI/4;
+        ctx.beginPath();
+        ctx.moveTo(tank.x + (tank.radius * Math.cos(tank.direction - beakAngle)), tank.y + (tank.radius * Math.sin(tank.direction - beakAngle)));
+        ctx.lineTo(tank.x + (tank.radius * beakLength * Math.cos(tank.direction)), tank.y + (tank.radius * beakLength * Math.sin(tank.direction)));
+        ctx.lineTo(tank.x + (tank.radius * Math.cos(tank.direction + beakAngle)), tank.y + (tank.radius * Math.sin(tank.direction + beakAngle)));
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 128, 255, 1)';
+        ctx.fill();
+
+        // draw the tank
+        ctx.beginPath();
+        ctx.arc(tank.x, tank.y, tank.radius, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 128, 255, 1)';
+        ctx.fill();
+    }
+
+
 
     setTimeout(draw, 0);
 }
