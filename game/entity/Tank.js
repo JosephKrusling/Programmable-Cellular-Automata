@@ -1,7 +1,8 @@
 const Entity = require('./Entity');
 
-function Tank(x, y, radius) {
+function Tank(x, y, radius, direction) {
     Entity.call(this, x, y, radius);
+    this.direction = direction;
 }
 
 Tank.prototype = Object.create(Entity.prototype);
