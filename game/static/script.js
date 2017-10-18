@@ -5,6 +5,9 @@ function init() {
     // Set up canvas globals
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
+    config = {
+        interpolation: false
+    }
 
     // Set up socket
     socket = io();
@@ -76,8 +79,12 @@ function draw() {
         // Interpolate to find estimated x of bullet.
         var timeAdvanced = (Date.now() - lastPacketReceived) / 1000;
         // console.log(timeAdvanced);
-        var deltaX = timeAdvanced * bullet.speed * Math.cos(bullet.direction);
-        var deltaY = timeAdvanced * bullet.speed * Math.sin(bullet.direction);
+        var deltaX = 0;
+        var deltaY = 0;
+        if (config.interpolation) {
+            deltaX = timeAdvanced * bullet.speed * Math.cos(bullet.direction);
+            deltaY = timeAdvanced * bullet.speed * Math.sin(bullet.direction);
+        }
 
 
         ctx.arc(bullet.x + deltaX, bullet.y + deltaY, bullet.radius, 0, 2 * Math.PI);
