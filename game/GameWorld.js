@@ -26,7 +26,7 @@ function GameWorld() {
     };
 
     this.lastUpdate = Date.now();
-    for (let i = 0; i < 100; i++)
+    for (let i = 0; i < 5; i++)
     {
         this.food.push(this.createRandomFood());
     }

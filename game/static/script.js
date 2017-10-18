@@ -61,8 +61,8 @@ function draw() {
         ctx.fillStyle = 'rgba(255, 255, 128, 1)';
         ctx.fill();
 
-        ctx.font = '14px Arial';
-        ctx.fillText(`x:${coin.x}, y:${coin.y}`, coin.x, coin.y);
+        ctx.font = '12px Arial';
+        ctx.fillText(`x:${coin.x.toFixed(1)}, y:${coin.y.toFixed(1)}`, coin.x, coin.y);
 
     }
 
@@ -109,6 +109,12 @@ function draw() {
         ctx.closePath();
         ctx.fillStyle = 'rgba(0, 128, 255, 1)';
         ctx.fill();
+
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.font = '12px Arial';
+        ctx.fillText(`x:${tank.x.toFixed(1)}, y:${tank.y.toFixed(1)}`, tank.x, tank.y);
+
     }
 
 
