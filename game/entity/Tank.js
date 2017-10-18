@@ -12,8 +12,10 @@ function Tank(x, y, radius, direction, attackCooldown=5000) {
 Tank.prototype = Object.create(Entity.prototype);
 
 // returns the points value of this tank
-Tank.prototype.getPoints = function (){
+Tank.prototype.getPoints = function () {
     return this.points;
+};
+
 Tank.prototype.mayShoot = function() {
   return Date.now() - this.lastAttack > this.attackCooldown;
 };
@@ -29,7 +31,7 @@ Tank.prototype.getHealth = function (){
 
 Tank.prototype.incrementPoints = function(){
     this.points++;
-}
+};
 
 // this tank gets hit and reduces health by 1
 Tank.prototype.getRekt = function (){
