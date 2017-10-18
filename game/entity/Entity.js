@@ -21,7 +21,7 @@ Entity.prototype.checkCollision = function(otherEntity) {
 };
 
 Entity.prototype.distance2 = function(otherEntity) {
-    return Math.abs((this.x - otherEntity.x) ^ 2 + (this.y - otherEntity.y) ^ 2);
+    return Math.pow(this.x - otherEntity.x, 2) + Math.pow(this.y - otherEntity.y, 2);
 };
 
 // Applies a random acceleration
