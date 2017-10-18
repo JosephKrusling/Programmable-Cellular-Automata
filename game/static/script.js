@@ -60,6 +60,10 @@ function draw() {
         ctx.closePath();
         ctx.fillStyle = 'rgba(255, 255, 128, 1)';
         ctx.fill();
+
+        ctx.font = '14px Arial';
+        ctx.fillText(`x:${coin.x}, y:${coin.y}`, coin.x, coin.y);
+
     }
 
     for (var i = 0; i < bullets.length; i++) {

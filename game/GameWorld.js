@@ -17,7 +17,7 @@ function GameWorld() {
             friction: 0.9
         },
         vision: {
-            maximumDistance: 100
+            maximumDistance: 10000
         },
         bullet: {
             speed: 800, // per second
