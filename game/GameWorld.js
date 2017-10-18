@@ -60,7 +60,7 @@ GameWorld.prototype.update = function () {
                     break;
 
                 case 'shoot':
-                    this.spawnBullet(tank, desiredMove.direction, this.config.bulletSpeed);
+                    this.spawnBullet(tank, tank.direction, this.config.bulletSpeed);
                     break;
             }
 
@@ -98,7 +98,7 @@ GameWorld.prototype.update = function () {
 
 GameWorld.prototype.createTank = function() {
     let spawn = this.getGoodSpawnPoint();
-    let tank = new Entity.Tank(spawn.x, spawn.y, 10);
+    let tank = new Entity.Tank(spawn.x, spawn.y, 15, Math.random() * 2 * Math.PI);
 
     this.tanks.push(tank);
     return tank;
