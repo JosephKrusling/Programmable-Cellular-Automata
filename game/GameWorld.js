@@ -1,6 +1,8 @@
 const Entity = require('./entity');
 const Quadtree = require('./util/Quadtree');
 
+const foodMax = 200;
+
 function GameWorld() {
     this.tanks = [];
     this.bullets = [];
@@ -26,7 +28,7 @@ function GameWorld() {
     };
 
     this.lastUpdate = Date.now();
-    for (let i = 0; i < 200; i++)
+    for (let i = 0; i < foodMax; i++)
     {
         this.food.push(this.createRandomFood());
     }
@@ -116,7 +118,11 @@ GameWorld.prototype.update = function () {
             let coin = this.food[foodIndex];
             if (tank.checkCollision(coin)) {
                 this.food.splice(foodIndex, 1);
+                tank.incrementPoints(); // add point value because we just picked up foodzies
             }
+        }
+        if(this.food.length < foodMax/2){
+            this.food.push(this.createRandomFood());
         }
     }
 
