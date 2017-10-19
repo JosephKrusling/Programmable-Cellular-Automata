@@ -13,7 +13,7 @@ function processGameTick() {
     // print(`TARGET: numCouns=${state.coins.length}, x=${targetX.toFixed(2)}, y=${targetY.toFixed(2)}, dist=${distance(state.myTank, bestCoin)}`);
     let direction = Math.atan2(targetY - state.myTank.y, targetX - state.myTank.x);
     return {
-        direction: direction,
+        facing: direction,
         // direction: 0,
         thrust: true,
         shoot: true

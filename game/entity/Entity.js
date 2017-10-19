@@ -20,7 +20,7 @@ Entity.prototype.checkCollision = function(otherEntity) {
     return distanceSquared < radiusSumSquared;
 };
 
-Entity.prototype.distance2 = function(directionotherEntity) {
+Entity.prototype.distance2 = function(otherEntity) {
     return Math.pow(this.x - otherEntity.x, 2) + Math.pow(this.y - otherEntity.y, 2);
 };
 

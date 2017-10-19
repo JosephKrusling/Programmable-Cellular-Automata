@@ -5,6 +5,7 @@ function GameWorld() {
     this.tanks = [];
     this.bullets = [];
     this.food = [];
+    this.asteroids = [];
     this.dimensions = {
         width: 700,
         height: 700
@@ -23,7 +24,8 @@ function GameWorld() {
             speed: 800, // per second
             radius: 10
         },
-        foodMax: 200
+        foodMax: 200,
+        asteroidsMax: 100
     };
 
     this.lastUpdate = Date.now();
@@ -31,6 +33,10 @@ function GameWorld() {
     {
         this.food.push(this.createRandomFood());
     }
+
+    // for (let i = 0; < this.config.asteroidsMax; i++) {
+    //     this.asteroids.push(new Entity.Asteroid());
+    // }
 }
 
 GameWorld.prototype.update = function () {
@@ -50,8 +56,8 @@ GameWorld.prototype.update = function () {
         }
 
         let distance = bullet.speed * msSinceLastUpdate / 1000;
-        bullet.x += distance * Math.cos(bullet.direction);
-        bullet.y += distance * Math.sin(bullet.direction);
+        bullet.x += distance * Math.cos(bullet.facing);
+        bullet.y += distance * Math.sin(bullet.facing);
     }
 
     // Process player moves
@@ -62,8 +68,8 @@ GameWorld.prototype.update = function () {
         if (desiredMove) {
             playersThatMoved++;
 
-            if ('direction' in desiredMove) {
-                tank.direction = desiredMove.direction;
+            if ('facing' in desiredMove) {
+                tank.facing = desiredMove.facing;
                 // console.log(tank.direction);
             }
 
@@ -72,8 +78,8 @@ GameWorld.prototype.update = function () {
             }
 
             if (tank.thrust) {
-                tank.xVelocity += this.config.tank.thrustAcceleration * secSinceLastUpdate * Math.cos(tank.direction);
-                tank.yVelocity += this.config.tank.thrustAcceleration * secSinceLastUpdate * Math.sin(tank.direction);
+                tank.xVelocity += this.config.tank.thrustAcceleration * secSinceLastUpdate * Math.cos(tank.facing);
+                tank.yVelocity += this.config.tank.thrustAcceleration * secSinceLastUpdate * Math.sin(tank.facing);
             }
 
             tank.x += tank.xVelocity * secSinceLastUpdate;
@@ -87,7 +93,7 @@ GameWorld.prototype.update = function () {
 
             if ('shoot' in desiredMove) {
                 if(tank.mayShoot()){
-                    this.spawnBullet(tank, tank.direction, this.config.bullet.speed);
+                    this.spawnBullet(tank, tank.facing, this.config.bullet.speed);
                     tank.startAttackCooldown();
                 }
             }
@@ -160,14 +166,14 @@ GameWorld.prototype.deleteTank = function (tank) {
     this.tanks.splice(this.tanks.indexOf(tank), 1);
 };
 
-GameWorld.prototype.spawnBullet = function(owner, direction, speed) {
+GameWorld.prototype.spawnBullet = function(owner, facing, speed) {
     let dist = owner.radius + this.config.bullet.radius;
 
     // So that the bullet spawns on the edge of the player rather than his center
-    let x = owner.x + dist * Math.cos(direction);
-    let y = owner.y + dist * Math.sin(direction);
+    let x = owner.x + dist * Math.cos(facing);
+    let y = owner.y + dist * Math.sin(facing);
 
-    let bullet = new Entity.Bullet(x, y, this.config.bullet.radius, direction, speed, owner);
+    let bullet = new Entity.Bullet(x, y, this.config.bullet.radius, facing, speed, owner);
     this.bullets.push(bullet);
 };
 

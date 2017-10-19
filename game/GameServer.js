@@ -11,7 +11,7 @@ const world = new GameWorld();
 
 const config = {
     network: {
-        tickFrequency: 200
+        tickFrequency: 100
     }
 };
 
