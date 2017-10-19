@@ -1,8 +1,6 @@
 const Entity = require('./entity');
 const Quadtree = require('./util/Quadtree');
 
-const foodMax = 50; // max number of foods on screen
-
 function GameWorld() {
     this.tanks = [];
     this.bullets = [];
@@ -23,12 +21,13 @@ function GameWorld() {
         },
         bullet: {
             speed: 800, // per second
-            radius: 5
-        }
+            radius: 10
+        },
+        foodMax: 200
     };
 
     this.lastUpdate = Date.now();
-    for (let i = 0; i < foodMax; i++)
+    for (let i = 0; i < this.config.foodMax; i++)
     {
         this.food.push(this.createRandomFood());
     }
@@ -89,7 +88,7 @@ GameWorld.prototype.update = function () {
             if ('shoot' in desiredMove) {
                 if(tank.mayShoot()){
                     this.spawnBullet(tank, tank.direction, this.config.bullet.speed);
-                    //tank.startAttackCooldown();
+                    tank.startAttackCooldown();
                 }
             }
             // console.log(desiredMove);
@@ -112,7 +111,7 @@ GameWorld.prototype.update = function () {
             if(tank.checkCollision(bullet)) {
                 // hit
                 // todo make tank that got hit respawn and drop 1/4 of its points
-                let deadPoints = Math.min(tank.points/4, foodMax/10); // don't create more than a 1/4 of the max number of foodzies
+                let deadPoints = Math.min(tank.points/4, this.config.foodMax/10); // don't create more than a 1/4 of the max number of foodzies
                 for (let i = 0; i < deadPoints;i++){
                     this.food.push(new Entity.Food(tank.x + (Math.random() + 10), tank.y + (Math.random() + 10), 5));
                 }
@@ -128,7 +127,7 @@ GameWorld.prototype.update = function () {
                 tank.incrementPoints(); // add point value because we just picked up foodzies
             }
         }
-        if(this.food.length < foodMax/2){
+        if(this.food.length < this.config.foodMax/2){
             this.food.push(this.createRandomFood());
         }
     }

@@ -1,8 +1,8 @@
-function Entity(x, y, radius, direction=0, xVelocity=0, yVelocity=0) {
+function Entity(x, y, radius, facing=0, xVelocity=0, yVelocity=0) {
     this.x = x;
     this.y = y;
     this.radius = radius;
-    this.direction = direction;
+    this.facing = facing;
     this.xVelocity = xVelocity;
     this.yVelocity = yVelocity;
     this.timeCreated = Date.now();
@@ -20,7 +20,7 @@ Entity.prototype.checkCollision = function(otherEntity) {
     return distanceSquared < radiusSumSquared;
 };
 
-Entity.prototype.distance2 = function(otherEntity) {
+Entity.prototype.distance2 = function(directionotherEntity) {
     return Math.pow(this.x - otherEntity.x, 2) + Math.pow(this.y - otherEntity.y, 2);
 };
 

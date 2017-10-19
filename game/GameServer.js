@@ -11,7 +11,7 @@ const world = new GameWorld();
 
 const config = {
     network: {
-        tickFrequency: 100
+        tickFrequency: 200
     }
 };
 
@@ -25,8 +25,6 @@ app.use(express.static('static'));
 // });
 
 io.on('connection', (socket) => {
-
-
     socket.on('disconnect', () => {
         if (socket.type === 'player') {
             socket.playerConnection.disconnected();

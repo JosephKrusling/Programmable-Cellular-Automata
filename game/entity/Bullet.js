@@ -1,9 +1,9 @@
 const Entity = require('./Entity');
 
-function Bullet(x, y, radius, direction, speed, owner)
+function Bullet(x, y, radius, facing, speed, owner)
 {
     Entity.call(this, x, y, radius);
-    this.direction = direction;
+    this.facing = facing;
     this.speed = speed;
     this.owner = owner;
 }

@@ -1,8 +1,8 @@
 const Entity = require('./Entity');
 
-function Tank(x, y, radius, direction, attackCooldown=5000) {
+function Tank(x, y, radius, facing, attackCooldown=2000) {
     Entity.call(this, x, y, radius);
-    this.direction = direction;
+    this.facing = facing;
     this.isShooting = false;
     this.lastAttack = 0;
     this.attackCooldown = attackCooldown;

@@ -6,8 +6,9 @@ function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     config = {
-        interpolation: false
-    }
+        interpolation: true,
+        debugText: false
+    };
 
     // Set up socket
     socket = io();
@@ -82,8 +83,8 @@ function draw() {
         var deltaX = 0;
         var deltaY = 0;
         if (config.interpolation) {
-            deltaX = timeAdvanced * bullet.speed * Math.cos(bullet.direction);
-            deltaY = timeAdvanced * bullet.speed * Math.sin(bullet.direction);
+            deltaX = timeAdvanced * bullet.speed * Math.cos(bullet.facing);
+            deltaY = timeAdvanced * bullet.speed * Math.sin(bullet.facing);
         }
 
 
@@ -98,30 +99,40 @@ function draw() {
         ctx.shadowBlur = 15;
         ctx.shadowColor = 'rgba(0, 0, 255, 1)';
 
+        var deltaX = 0;
+        var deltaY = 0;
+        if (config.interpolation) {
+            deltaX = timeAdvanced * tank.xVelocity;
+            deltaY = timeAdvanced * tank.yVelocity;
+        }
+        
         // Advanced beak math
         // DON'T TRY THIS AT HOME KIDS
         let beakLength = 2.0;
         let beakAngle = Math.PI/4;
         ctx.beginPath();
-        ctx.moveTo(tank.x + (tank.radius * Math.cos(tank.direction - beakAngle)), tank.y + (tank.radius * Math.sin(tank.direction - beakAngle)));
-        ctx.lineTo(tank.x + (tank.radius * beakLength * Math.cos(tank.direction)), tank.y + (tank.radius * beakLength * Math.sin(tank.direction)));
-        ctx.lineTo(tank.x + (tank.radius * Math.cos(tank.direction + beakAngle)), tank.y + (tank.radius * Math.sin(tank.direction + beakAngle)));
+        ctx.moveTo(tank.x + deltaX + (tank.radius * Math.cos(tank.facing - beakAngle)), tank.y + deltaY + (tank.radius * Math.sin(tank.facing - beakAngle)));
+        ctx.lineTo(tank.x + deltaX + (tank.radius * beakLength * Math.cos(tank.facing)), tank.y + deltaY + (tank.radius * beakLength * Math.sin(tank.facing)));
+        ctx.lineTo(tank.x + deltaX + (tank.radius * Math.cos(tank.facing + beakAngle)), tank.y + deltaY + (tank.radius * Math.sin(tank.facing + beakAngle)));
         ctx.closePath();
         ctx.fillStyle = 'rgba(0, 128, 255, 1)';
         ctx.fill();
 
         // draw the tank
         ctx.beginPath();
-        ctx.arc(tank.x, tank.y, tank.radius, 0, 2 * Math.PI);
+        ctx.arc(tank.x + deltaX, tank.y + deltaY, tank.radius, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fillStyle = 'rgba(0, 128, 255, 1)';
         ctx.fill();
 
         // draw tank's x and y coordinates
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        ctx.font = '12px Arial';
-        ctx.fillText(`x:${tank.x.toFixed(1)}, y:${tank.y.toFixed(1)}`,tank.x, tank.y);
-        ctx.fillText(`points:${tank.points}`,tank.x, tank.y+12);
+        if (config.debugText) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            ctx.font = '12px Arial';
+            ctx.fillText(`x:${tank.x.toFixed(1)}, y:${tank.y.toFixed(1)}`,tank.x + deltaX, tank.y + deltaY);
+            ctx.fillText(`points:${tank.points}`,tank.x + deltaX, tank.y + deltaY+12);
+        }
+
 
         // draw the tank's point value
 
