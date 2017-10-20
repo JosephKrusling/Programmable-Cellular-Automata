@@ -232,7 +232,8 @@ function draw() {
     }
 
 
-    setTimeout(draw, 0);
+    requestAnimationFrame(draw);
+    // setTimeout(draw, 0);
 }
 
 
