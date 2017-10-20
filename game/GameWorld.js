@@ -132,6 +132,14 @@ GameWorld.prototype.update = function () {
 
         for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
             let coin = this.food[foodIndex];
+            // // coin vacuum
+            // let dist2 = tank.distance2(coin);
+            // if (dist2 < (this.config.vision.maximumDistance / 2) ** 2) {
+            //     let velocity = 800 * secSinceLastUpdate;
+            //     let angle = Math.atan2(tank.y - coin.y, tank.x - coin.x);
+            //     coin.xVelocity += velocity *= Math.cos(angle);
+            //     coin.yVelocity += velocity *= Math.sin(angle);
+            // }
             if (tank.checkCollision(coin)) {
                 this.food.splice(foodIndex, 1);
                 tank.incrementPoints(); // add point value because we just picked up foodzies
