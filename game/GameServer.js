@@ -11,7 +11,7 @@ const world = new GameWorld();
 
 const config = {
     network: {
-        tickFrequency: 150
+        tickFrequency: 100
     }
 };
 
@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
 
     });
     socket.on('scriptError', (error) => {
-        console.log(`Script error: ${error}`);
+        // console.log(`Script error: ${error}`);
     });
     socket.on('type', (type) => {
         if (type === 'player') {
