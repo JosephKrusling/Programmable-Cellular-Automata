@@ -223,7 +223,7 @@ GameWorld.prototype.spawnAsteroid = function() {
         40,
         Math.random() * 2 * Math.PI
     );
-    console.log(asteroid);
+    // console.log(asteroid);
     this.asteroids.push(asteroid);
 };
 
