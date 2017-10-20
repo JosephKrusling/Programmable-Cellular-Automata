@@ -16,7 +16,7 @@ function init() {
                 drawCollisionCircle: false
             },
             tanks: {
-                drawVisionIndicator: true
+                drawVisionIndicator: false
             }
         }
     };
