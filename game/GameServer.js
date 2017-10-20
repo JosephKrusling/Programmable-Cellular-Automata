@@ -90,6 +90,7 @@ function update() {
     viewerConnections.forEach(function(vc) {
         vc.socket.emit('stateUpdate', {
             dimensions: world.dimensions,
+            vision: world.config.vision.maximumDistance,
             tanks: world.tanks,
             bullets: world.bullets,
             coins: world.food,

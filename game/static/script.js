@@ -14,6 +14,9 @@ function init() {
             },
             asteroid: {
                 drawCollisionCircle: false
+            },
+            tanks: {
+                drawVisionIndicator: true
             }
         }
     };
@@ -34,7 +37,11 @@ function init() {
         bullets = state.bullets;
         coins = state.coins;
         asteroids = state.asteroids;
+        if (state.dimensions.height !== dimensions.height || state.dimensions.width !== dimensions.width) {
+            setTimeout(resizeCanvas, 0);
+        }
         dimensions = state.dimensions;
+        vision = state.vision;
 
         // console.log(JSON.stringify(bullets));
     });
@@ -159,6 +166,7 @@ function draw() {
         ctx.fillStyle = config.graphics.colors.background;
         ctx.fill();
         ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+        ctx.setLineDash([]);
         ctx.stroke();
 
         if (config.graphics.asteroid.drawCollisionCircle) {
@@ -206,6 +214,16 @@ function draw() {
             ctx.font = '12px Arial';
             ctx.fillText(`x:${tank.x.toFixed(1)}, y:${tank.y.toFixed(1)}`,tank.x + deltaX, tank.y + deltaY);
             ctx.fillText(`points:${tank.points}`,tank.x + deltaX, tank.y + deltaY+12);
+        }
+
+        if (config.graphics.tanks.drawVisionIndicator) {
+            ctx.beginPath();
+            ctx.arc(tank.x + deltaX, tank.y + deltaY, vision, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([3, 25]);
+            ctx.stroke();
         }
 
 
