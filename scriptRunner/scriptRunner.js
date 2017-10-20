@@ -1,6 +1,6 @@
 const {VM, VMScript} = require('vm2');
 const fs = require('fs');
-const socket = require('socket.io-client')('http://localhost:3000');
+const socket = require('socket.io-client')('http://13.58.49.72/');
 
 
 
