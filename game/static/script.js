@@ -17,6 +17,10 @@ function init() {
             }
         }
     };
+    dimensions = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
 
     // Set up socket
     socket = io();
@@ -30,6 +34,7 @@ function init() {
         bullets = state.bullets;
         coins = state.coins;
         asteroids = state.asteroids;
+        dimensions = state.dimensions;
 
         // console.log(JSON.stringify(bullets));
     });
@@ -38,8 +43,13 @@ function init() {
     // resize the canvas to fill browser window dynamically
     window.addEventListener('resize', resizeCanvas, false);
     function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let scaleHorizontal = window.innerWidth / dimensions.width;
+        let scaleVertical = window.innerHeight / dimensions.height;
+        let practicalScale = Math.min(scaleHorizontal, scaleVertical);
+        canvas.width = window.innerWidth / practicalScale;
+        canvas.height = window.innerHeight / practicalScale;
+        ctx.scale(practicalScale, practicalScale);
+
     }
     resizeCanvas();
 
@@ -54,6 +64,7 @@ function init() {
 }
 
 function draw() {
+
     ctx.globalCompositeOperation = "source-over"; // make front color overwrite
     ctx.fillStyle = config.graphics.colors.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -92,7 +103,7 @@ function draw() {
         var bullet = bullets[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = 'rgba(255, 0, 0, 1)';
+        ctx.shadowColor = 'rgba(255, 255, 255, 1)';
         ctx.beginPath();
 
         // Interpolate to find estimated x of bullet.
@@ -108,7 +119,7 @@ function draw() {
 
         ctx.arc(bullet.x + deltaX, bullet.y + deltaY, bullet.radius, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.fill();
     }
 
@@ -123,14 +134,14 @@ function draw() {
         ctx.shadowBlur = 0;
 
         var shape = [
-            {mag: 1, angle: 0.5},
+            {mag: 1.05, angle: 0.5},
             {mag: 0.8, angle: 1.2},
-            {mag: 1.1, angle: 1.8},
-            {mag: 1, angle: 2.6},
-            {mag: 1, angle: 3.9},
+            {mag: 1.15, angle: 1.8},
+            {mag: 1.05, angle: 2.6},
+            {mag: 1.05, angle: 3.9},
             {mag: 0.5, angle: 4.1},
-            {mag: 1.1, angle: 4.6},
-            {mag: 1, angle: 5.4}];
+            {mag: 1.15, angle: 4.6},
+            {mag: 1.05, angle: 5.4}];
         ctx.beginPath();
         // ctx.arc(asteroid.x + deltaX, asteroid.y + deltaY, asteroid.radius, 0, 2 * Math.PI);
         var magnitude = shape[0].mag * asteroid.radius;
@@ -201,7 +212,6 @@ function draw() {
         // draw the tank's point value
 
     }
-
 
 
     setTimeout(draw, 0);

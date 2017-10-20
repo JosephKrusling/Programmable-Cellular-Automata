@@ -7,8 +7,8 @@ function GameWorld() {
     this.food = [];
     this.asteroids = [];
     this.dimensions = {
-        width: 700,
-        height: 700
+        width: 2000,
+        height: 1000
     };
     this.food = [];
     this.config = {
