@@ -23,10 +23,10 @@ function GameWorld() {
         bullet: {
             speed: 700, // per second
             radius: 10,
-            maxAge: 4000
+            maxAge: 2000
         },
         coins: {
-            maxAge: 10000
+            maxAge: 5000
         },
         foodMax: 200,
         asteroidsMax: 20

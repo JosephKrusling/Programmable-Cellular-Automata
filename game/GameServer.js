@@ -11,13 +11,14 @@ const world = new GameWorld();
 
 const config = {
     network: {
-        tickFrequency: 100
+        tickFrequency: 150
     }
 };
 
 let playerConnections = [];
 let viewerConnections = [];
 
+app.set('port, 80');
 app.use(express.static('static'));
 
 // app.get('/', (req, res) => {
