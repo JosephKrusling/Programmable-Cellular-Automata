@@ -18,14 +18,15 @@ function GameWorld() {
             friction: 0.8
         },
         vision: {
-            maximumDistance: 10000
+            maximumDistance: 200
         },
         bullet: {
-            speed: 800, // per second
-            radius: 10
+            speed: 700, // per second
+            radius: 10,
+            maxAge: 4000
         },
         coins: {
-            maxAge: 60000
+            maxAge: 10000
         },
         foodMax: 200,
         asteroidsMax: 20
@@ -114,12 +115,16 @@ GameWorld.prototype.update = function () {
                 continue;
             }
             if(tank.checkCollision(bullet)) {
-                // hit
-                // todo make tank that got hit respawn and drop 1/4 of its points
-                let deadPoints = Math.min(tank.points/4, this.config.foodMax/10); // don't create more than a 1/4 of the max number of foodzies
-                for (let i = 0; i < deadPoints;i++){
-                    this.food.push(new Entity.Food(tank.x + (Math.random() + 10), tank.y + (Math.random() + 10), 5));
-                }
+                this.spawnCoinFountain(tank.points/2, tank.x, tank.y, 200);
+                tank.getRekt(); // reset points and respawn
+            }
+            collisions++;
+        }
+
+        for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
+            let asteroid = this.asteroids[asteroidIndex];
+            if(tank.checkCollision(asteroid)) {
+                this.spawnCoinFountain(tank.points/2, tank.x, tank.y, 200);
                 tank.getRekt(); // reset points and respawn
             }
             collisions++;
