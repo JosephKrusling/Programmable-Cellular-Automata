@@ -31,7 +31,10 @@ function init() {
         socket.emit('type', 'viewer');
     });
 
+    lastPacketReceived = Date.now();
     socket.on('stateUpdate', function(state) {
+        var timeSincePacket = System.now() - lastPacketReceived;
+        console.log(`Updated in ${timeSincePacket}`);
         lastPacketReceived = Date.now();
         tanks = state.tanks;
         bullets = state.bullets;
