@@ -91,7 +91,8 @@ function update() {
         vc.socket.emit('stateUpdate', {
             tanks: world.tanks,
             bullets: world.bullets,
-            coins: world.food
+            coins: world.food,
+            asteroids: world.asteroids
         })
     });
 }

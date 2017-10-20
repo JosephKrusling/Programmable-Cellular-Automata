@@ -6,12 +6,26 @@ var state = getState();
 
 function processGameTick() {
     // print(state);
+    let direction = 0;
+    
+
     let bestCoin = getNearest(state.myTank, state.coins);
-    // print(bestCoin);
-    let targetX = bestCoin.x;
-    let targetY = bestCoin.y;
-    // print(`TARGET: numCouns=${state.coins.length}, x=${targetX.toFixed(2)}, y=${targetY.toFixed(2)}, dist=${distance(state.myTank, bestCoin)}`);
-    let direction = Math.atan2(targetY - state.myTank.y, targetX - state.myTank.x);
+    if (bestCoin) {
+        let targetX = bestCoin.x;
+        let targetY = bestCoin.y;
+        direction = Math.atan2(targetY - state.myTank.y, targetX - state.myTank.x);
+    } else {
+        // find the nearest asteroid
+        let nearestAsteroid = getNearest(state.myTank, state.asteroids);
+        if (nearestAsteroid) {
+            let targetX = nearestAsteroid.x;
+            let targetY = nearestAsteroid.y;
+            direction = Math.atan2(targetY - state.myTank.y, targetX - state.myTank.x);
+        } else {
+            direction = Math.random() * 2 * Math.PI;
+        }
+    }
+
     return {
         facing: direction,
         // direction: 0,

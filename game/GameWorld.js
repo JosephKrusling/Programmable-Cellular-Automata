@@ -25,18 +25,14 @@ function GameWorld() {
             radius: 10
         },
         foodMax: 200,
-        asteroidsMax: 100
+        asteroidsMax: 20
     };
 
     this.lastUpdate = Date.now();
-    for (let i = 0; i < this.config.foodMax; i++)
-    {
-        this.food.push(this.createRandomFood());
-    }
 
-    // for (let i = 0; < this.config.asteroidsMax; i++) {
-    //     this.asteroids.push(new Entity.Asteroid());
-    // }
+    for (let i = 0; i < this.config.asteroidsMax; i++) {
+        this.spawnAsteroid();
+    }
 }
 
 GameWorld.prototype.update = function () {
@@ -133,8 +129,17 @@ GameWorld.prototype.update = function () {
                 tank.incrementPoints(); // add point value because we just picked up foodzies
             }
         }
-        if(this.food.length < this.config.foodMax/2){
-            this.food.push(this.createRandomFood());
+    }
+
+    // wtf is this collision code jesus christ
+    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
+        let bullet = this.bullets[bulletIndex];
+        for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
+            let asteroid = this.asteroids[asteroidIndex];
+
+            if (bullet.checkCollision(asteroid)) {
+                this.killAsteroid(asteroid);
+            }
         }
     }
 
@@ -147,6 +152,17 @@ GameWorld.prototype.update = function () {
         food.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
         food.xVelocity *= 0.9; // todo this is not correct since it decays more for faster updates. fix it
         food.yVelocity *= 0.9;
+    }
+
+    // Make asteroids drift and rotate
+    for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
+        let asteroid = this.asteroids[asteroidIndex];
+        asteroid.drift(0.03, 5);
+        asteroid.x += asteroid.xVelocity * secSinceLastUpdate;
+        asteroid.y += asteroid.yVelocity * secSinceLastUpdate;
+        asteroid.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
+        asteroid.xVelocity *= 0.98; // todo this is not correct since it decays more for faster updates. fix it
+        asteroid.yVelocity *= 0.981;
     }
 
 
@@ -177,12 +193,41 @@ GameWorld.prototype.spawnBullet = function(owner, facing, speed) {
     this.bullets.push(bullet);
 };
 
+GameWorld.prototype.spawnAsteroid = function() {
+    let asteroid = new Entity.Asteroid(
+        Math.random() * this.dimensions.width,
+        Math.random() * this.dimensions.height,
+        40,
+        Math.random() * 2 * Math.PI
+    );
+    console.log(asteroid);
+    this.asteroids.push(asteroid);
+};
+
+GameWorld.prototype.killAsteroid = function(asteroid) {
+    this.spawnCoinFountain(10, asteroid.x, asteroid.y, 160);
+    this.asteroids.splice(this.asteroids.indexOf(asteroid), 1);
+    this.spawnAsteroid();
+};
+
+GameWorld.prototype.spawnCoinFountain = function(quantity, x, y, velocityMax) {
+    for (let i = 0; i < quantity; i++) {
+        let coin = new Entity.Food(x, y);
+        let velocity = Math.random() * velocityMax;
+        let angle = Math.random() * 2 * Math.PI;
+        coin.xVelocity = velocity * Math.cos(angle);
+        coin.yVelocity = velocity * Math.sin(angle);
+        this.food.push(coin);
+    }
+};
+
 GameWorld.prototype.getWorldSurrounding = function(player) {
     let state = {
         myTank: player,
         tanks: [],
         bullets: [],
-        coins: []
+        coins: [],
+        asteroids: []
     };
 
     // Add nearby tanks
@@ -223,6 +268,19 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
             let maxdist2 = Math.pow(this.config.vision.maximumDistance, 2);
             if (distance2 < maxdist2) {
                 state.coins.push(coin)
+            }
+        }
+    }
+    
+    // Add nearby asteroids
+    for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
+        let asteroid = this.asteroids[asteroidIndex];
+
+        if (asteroid) {
+            let distance2 = player.distance2(asteroid);
+            let maxdist2 = Math.pow(this.config.vision.maximumDistance, 2);
+            if (distance2 < maxdist2) {
+                state.asteroids.push(asteroid)
             }
         }
     }

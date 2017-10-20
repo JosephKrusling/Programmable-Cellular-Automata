@@ -7,7 +7,15 @@ function init() {
     ctx = canvas.getContext('2d');
     config = {
         interpolation: true,
-        debugText: false
+        debugText: true,
+        graphics: {
+            colors: {
+                background: 'rgba(15,15,30,1)'
+            },
+            asteroid: {
+                drawCollisionCircle: false
+            }
+        }
     };
 
     // Set up socket
@@ -21,8 +29,9 @@ function init() {
         tanks = state.tanks;
         bullets = state.bullets;
         coins = state.coins;
+        asteroids = state.asteroids;
 
-       // console.log(JSON.stringify(bullets));
+        // console.log(JSON.stringify(bullets));
     });
 
 
@@ -38,7 +47,7 @@ function init() {
     tanks = [];
     bullets = [];
     coins = [];
-
+    asteroids = [];
 
     // Start 'er up.
     window.requestAnimationFrame(draw);
@@ -46,21 +55,30 @@ function init() {
 
 function draw() {
     ctx.globalCompositeOperation = "source-over"; // make front color overwrite
-    ctx.fillStyle = "rgba(15,15,30,1)";
+    ctx.fillStyle = config.graphics.colors.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // ctx.globalCompositeOperation = 'lighter'; // make colors add
 
-    // console.log(`Draw (${tanks.length} tanks) (${bullets.length} bullets)`);
+    // console.log(`Draw (${asteroids.length} asteroids) (${bullets.length} bullets)`);
 
     for (var i = 0; i < coins.length; i++) {
 
         var coin = coins[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = 'rgba(255, 255, 128, 1)';
+        ctx.shadowColor = coin.color;
+
+        var timeAdvanced = (Date.now() - lastPacketReceived) / 1000;
+        var deltaX = 0;
+        var deltaY = 0;
+        if (config.interpolation) {
+            deltaX = timeAdvanced * coin.xVelocity;
+            deltaY = timeAdvanced * coin.yVelocity;
+        }
+
         ctx.beginPath();
-        ctx.arc(coin.x, coin.y, coin.radius, 0, 2 * Math.PI);
+        ctx.arc(coin.x + deltaX, coin.y + deltaY, coin.radius, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fillStyle = coin.color;
         ctx.fill();
@@ -94,6 +112,52 @@ function draw() {
         ctx.fill();
     }
 
+
+    for (var i = 0; i < asteroids.length; i++) {
+        var asteroid = asteroids[i];
+
+        let deltaX = 0;
+        let deltaY = 0;
+
+        // draw the asteroid
+        ctx.shadowBlur = 0;
+
+        var shape = [
+            {mag: 1, angle: 0.5},
+            {mag: 0.8, angle: 1.2},
+            {mag: 1.1, angle: 1.8},
+            {mag: 1, angle: 2.6},
+            {mag: 1, angle: 3.9},
+            {mag: 0.5, angle: 4.1},
+            {mag: 1.1, angle: 4.6},
+            {mag: 1, angle: 5.4}];
+        ctx.beginPath();
+        // ctx.arc(asteroid.x + deltaX, asteroid.y + deltaY, asteroid.radius, 0, 2 * Math.PI);
+        var magnitude = shape[0].mag * asteroid.radius;
+        var angle = asteroid.facing + shape[0].angle;
+        ctx.moveTo(magnitude * Math.cos(angle) + asteroid.x, magnitude * Math.sin(angle) + asteroid.y);
+
+        for (let i = 1; i < shape.length; i++) {
+            magnitude = shape[i].mag * asteroid.radius;
+            angle = asteroid.facing + shape[i].angle;
+            ctx.lineTo(magnitude * Math.cos(angle) + asteroid.x, magnitude * Math.sin(angle) + asteroid.y);
+        }
+
+        ctx.closePath();
+        ctx.lineWidth = 3;
+        ctx.fillStyle = config.graphics.colors.background;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+        ctx.stroke();
+
+        if (config.graphics.asteroid.drawCollisionCircle) {
+            ctx.beginPath();
+            ctx.arc(asteroid.x, asteroid.y, asteroid.radius, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.stroke();
+        }
+    }
+
     for (var i = 0; i < tanks.length; i++) {
         var tank = tanks[i];
         ctx.shadowBlur = 15;
@@ -105,7 +169,7 @@ function draw() {
             deltaX = timeAdvanced * tank.xVelocity;
             deltaY = timeAdvanced * tank.yVelocity;
         }
-        
+
         // Advanced beak math
         // DON'T TRY THIS AT HOME KIDS
         let beakLength = 2.0;
