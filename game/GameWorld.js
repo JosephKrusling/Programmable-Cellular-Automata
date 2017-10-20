@@ -50,7 +50,7 @@ GameWorld.prototype.update = function () {
     // Move bullets.
     for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
         let bullet = this.bullets[bulletIndex];
-        if (bullet.getAge() > 10000) {
+        if (bullet.getAge() > this.config.bullet.maxAge) {
             this.bullets.splice(bulletIndex, 1);
         }
 
