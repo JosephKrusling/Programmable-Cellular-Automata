@@ -190,7 +190,7 @@ GameWorld.prototype.update = function () {
 
 
 
-    // console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${collisions} Collisions, ${playersThatMoved}/${this.tanks.length} Moved`);
+    console.log(`Updated in ${updatePeriod}ms. ${this.tanks.length} Tanks, ${this.bullets.length} Bullets, ${playersThatMoved}/${this.tanks.length} Moved`);
 };
 
 GameWorld.prototype.createTank = function() {
