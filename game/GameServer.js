@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const Entity = require('./entity');
-const PlayerConnection = require('./PlayerConnection');
-const ViewerConnection = require('./ViewerConnection');
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const Entity = require("./entity");
+const PlayerConnection = require("./PlayerConnection");
+const ViewerConnection = require("./ViewerConnection");
 
-const GameWorld = require('./GameWorld');
+const GameWorld = require("./GameWorld");
 const world = new GameWorld();
 
 const config = {
@@ -18,36 +18,34 @@ const config = {
 let playerConnections = [];
 let viewerConnections = [];
 
-app.use(express.static('static'));
+app.use(express.static("static"));
 
 // app.get('/', (req, res) => {
 //     res.sendFile(__dirname + "/static/index.html");
 // });
 
-io.on('connection', (socket) => {
-    socket.on('disconnect', () => {
-        if (socket.type === 'player') {
+io.on("connection", socket => {
+    socket.on("disconnect", () => {
+        if (socket.type === "player") {
             socket.playerConnection.disconnected();
             world.deleteTank(socket.playerConnection.player);
-        } else if (socket.type === 'viewer') {
+        } else if (socket.type === "viewer") {
             socket.viewerConnection.disconnected();
-
         }
-
     });
-    socket.on('scriptError', (error) => {
+    socket.on("scriptError", error => {
         console.log(`Script error: ${error}`);
     });
-    socket.on('type', (type) => {
-        if (type === 'player') {
-            socket.type = 'player';
+    socket.on("type", type => {
+        if (type === "player") {
+            socket.type = "player";
 
             let pc = new PlayerConnection(socket);
             playerConnections.push(pc);
             socket.playerConnection = pc;
             socket.playerConnection.player = world.createTank();
-        } else if (type === 'viewer') {
-            socket.type = 'viewer';
+        } else if (type === "viewer") {
+            socket.type = "viewer";
 
             let vc = new ViewerConnection(socket);
             viewerConnections.push(vc);
@@ -59,15 +57,19 @@ io.on('connection', (socket) => {
             console.log(`Somebody tried to connect with unusual type ${type}`);
         }
     });
-    socket.on('action', (packet) => {
+    socket.on("action", packet => {
         // This desired move is processed in GameWorld.update.
         // It will be unset after it is processed.
         socket.playerConnection.player.desiredMove = packet.desiredMove;
-    })
+    });
+    socket.on("submittedScript", data => {
+        console.log(data.script);
+        // do stuff with script here
+    });
 });
 
 http.listen(3000, () => {
-    console.log('listening');
+    console.log("listening");
 });
 
 function update() {
@@ -79,20 +81,19 @@ function update() {
     // Update the game world.
     world.update();
 
-
     // Broadcast the state to all the players.
     playerConnections.forEach(function(pc) {
-        pc.socket.emit('tick', {
+        pc.socket.emit("tick", {
             state: world.getWorldSurrounding(pc.player)
-        })
+        });
     });
 
     viewerConnections.forEach(function(vc) {
-        vc.socket.emit('stateUpdate', {
+        vc.socket.emit("stateUpdate", {
             tanks: world.tanks,
             bullets: world.bullets,
             coins: world.food
-        })
+        });
     });
 }
 update();

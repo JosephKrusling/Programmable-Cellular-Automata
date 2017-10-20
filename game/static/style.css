@@ -6,3 +6,79 @@
 body {
     overflow:hidden;
 }
+
+.canvas-container {
+	position: relative;
+}
+
+#canvas {
+	position: absolute;
+}
+
+#submitScript {
+	position: absolute;
+	margin-top: 5%;
+	right: 5%;
+	height: 30px;
+	background-color: transparent;
+	color: white;
+	border: 1px solid white;
+	border-radius: 7px;
+	padding-right: 8px;
+	padding-left: 8px;
+	cursor: pointer;
+}
+
+#submitScript:hover {
+	position: absolute;
+	margin-top: 5%;
+	right: 5%;
+	height: 30px;
+	background-color: white;
+	color: black;
+	border: 1px solid black;
+	border-radius: 7px;
+	padding-right: 8px;
+	padding-left: 8px;
+	cursor: pointer;
+}
+
+#submitScript:focus {
+	outline: none;
+}
+
+#finalizeScript {
+	display: none;
+	position: absolute;
+	margin-top: 5%;
+	right: 5%;
+	height: 30px;
+	background-color: transparent;
+	color: white;
+	border: 1px solid white;
+	border-radius: 7px;
+	padding-right: 8px;
+	padding-left: 8px;
+	cursor: pointer;
+	z-index: 2;
+}
+
+#finalizeScript:hover {
+	position: absolute;
+	margin-top: 5%;
+	right: 5%;
+	height: 30px;
+	background-color: white;
+	color: black;
+	border: 1px solid black;
+	border-radius: 7px;
+	padding-right: 8px;
+	padding-left: 8px;
+	cursor: pointer;
+	z-index: 2;
+}
+
+#finalizeScript:focus {
+	outline: none;
+	z-index: 2;
+}
