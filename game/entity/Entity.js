@@ -1,4 +1,4 @@
-function Entity(x, y, radius, facing=0, xVelocity=0, yVelocity=0, angularVelocity) {
+function Entity(x, y, radius, facing=0, xVelocity=0, yVelocity=0, angularVelocity=0) {
     this.x = x;
     this.y = y;
     this.radius = radius;
@@ -33,6 +33,12 @@ Entity.prototype.drift = function(chance, maxVelocityChange) {
     let direction = Math.random() * 2 * Math.PI;
     this.xVelocity += drift * Math.cos(direction);
     this.yVelocity += drift * Math.sin(direction);
+
+
+};
+
+Entity.prototype.nudge = function(chance, maxAngularVelocityChange) {
+    this.angularVelocity += Math.random() * maxAngularVelocityChange * 2 - maxAngularVelocityChange;
 };
 
 Entity.prototype.enforceBounds = function(minX, minY, maxX, maxY) {

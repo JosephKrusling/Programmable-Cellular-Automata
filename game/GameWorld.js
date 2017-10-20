@@ -24,6 +24,9 @@ function GameWorld() {
             speed: 800, // per second
             radius: 10
         },
+        coins: {
+            maxAge: 60000
+        },
         foodMax: 200,
         asteroidsMax: 20
     };
@@ -146,6 +149,9 @@ GameWorld.prototype.update = function () {
     // Make food drift
     for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
         let food = this.food[foodIndex];
+        if (food.getAge() > this.config.coins.maxAge) {
+            this.food.splice(this.food.indexOf(food), 1);
+        }
         food.drift(0.1, 10);
         food.x += food.xVelocity * secSinceLastUpdate;
         food.y += food.yVelocity * secSinceLastUpdate;
@@ -157,12 +163,16 @@ GameWorld.prototype.update = function () {
     // Make asteroids drift and rotate
     for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
         let asteroid = this.asteroids[asteroidIndex];
-        asteroid.drift(0.03, 5);
+        asteroid.drift(0.3 * secSinceLastUpdate, 10);
         asteroid.x += asteroid.xVelocity * secSinceLastUpdate;
         asteroid.y += asteroid.yVelocity * secSinceLastUpdate;
         asteroid.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
         asteroid.xVelocity *= 0.98; // todo this is not correct since it decays more for faster updates. fix it
-        asteroid.yVelocity *= 0.981;
+        asteroid.yVelocity *= 0.98;
+
+        asteroid.nudge(0.005 * secSinceLastUpdate, 0.05);
+        asteroid.facing += asteroid.angularVelocity * secSinceLastUpdate;
+        asteroid.angularVelocity *= 0.9;
     }
 
 
