@@ -1,3 +1,5 @@
+const Rectangle = require('./Rectangle');
+
 function Entity(x, y, radius, facing=0, xVelocity=0, yVelocity=0) {
     this.x = x;
     this.y = y;
@@ -8,6 +10,10 @@ function Entity(x, y, radius, facing=0, xVelocity=0, yVelocity=0) {
     this.timeCreated = Date.now();
 }
 
+Entity.prototype.getRange = function() {
+
+    return new Rectangle(this.x, this.y, this.radius, this.radius);
+};
 
 Entity.prototype.getAge = function() {
     return Date.now() - this.timeCreated;

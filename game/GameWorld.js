@@ -1,7 +1,8 @@
 const Entity = require('./entity');
-const Quadtree = require('./util/Quadtree');
+const QuadTree = require('./util/Quadtree');
 
 function GameWorld() {
+
     this.tanks = [];
     this.bullets = [];
     this.food = [];
@@ -10,6 +11,7 @@ function GameWorld() {
         width: 700,
         height: 700
     };
+
     this.food = [];
     this.config = {
         tank: {
@@ -28,16 +30,39 @@ function GameWorld() {
         asteroidsMax: 100
     };
 
+    // init quadtree
+    this.quadtree = new QuadTree(null,
+        new Entity.Rectangle(1000, 1000, 1000, 1000), // todo don't know dimensions
+        (this.config.foodMax + 20 + 20), // max number of entities: food + 20 for number of max tanks + 20 for number of max bullets
+        12);
+
     this.lastUpdate = Date.now();
     for (let i = 0; i < this.config.foodMax; i++)
     {
-        this.food.push(this.createRandomFood());
+        let ranfood = this.createRandomFood();
+        // this.quadtree.add(new Entity.Rectangle(ranfood.x, ranfood.y, ranfood.radius, ranfood.radius)); // insert box of food to quadtree
+        // insert box of food to quadtree
+        if(!this.quadtree.add(ranfood)){
+            let thing = 0;
+        }
+        this.food.push(ranfood);
     }
 
     // for (let i = 0; < this.config.asteroidsMax; i++) {
     //     this.asteroids.push(new Entity.Asteroid());
     // }
 }
+
+// GameWorld.prototype.rangeBorders = function() {
+//     var w = this.config.borderRight - this.config.borderLeft,
+//         h = this.config.borderBottom - this.config.borderTop;
+//     return new Rectangle(
+//         this.config.borderLeft + w / 2,
+//         this.config.borderTop + w / 2,
+//         w / 2,
+//         h / 2
+//     );
+// };
 
 GameWorld.prototype.update = function () {
     if (this.tanks === undefined || this.bullets === undefined)
@@ -141,6 +166,7 @@ GameWorld.prototype.update = function () {
     // Make food drift
     for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
         let food = this.food[foodIndex];
+        //this.quadtree.update(food); // idk know this is supposed to actually update anything...
         food.drift(0.1, 10);
         food.x += food.xVelocity * secSinceLastUpdate;
         food.y += food.yVelocity * secSinceLastUpdate;
@@ -158,6 +184,10 @@ GameWorld.prototype.createTank = function() {
     let spawn = this.getGoodSpawnPoint();
     let tank = new Entity.Tank(spawn.x, spawn.y, 15, Math.random() * 2 * Math.PI);
 
+    // this.quadtree.add(new Entity.Rectangle(tank.x, tank.y, tank.radius, tank.radius));
+    if(this.quadtree.add(tank)){
+        let thing = 0;
+    }
     this.tanks.push(tank);
     return tank;
 };
