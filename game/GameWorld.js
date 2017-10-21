@@ -27,6 +27,7 @@ function GameWorld() {
         },
         coins: {
             maxAge: 10000,
+            radius: 6,
             asteroidBountyMin: 5,
             asteroidBountyMax: 10,
             asteroidExplosionVelocity: 100,
@@ -251,7 +252,7 @@ GameWorld.prototype.killAsteroid = function(asteroid) {
 
 GameWorld.prototype.spawnCoinFountain = function(quantity, x, y, velocityMax) {
     for (let i = 0; i < quantity; i++) {
-        let coin = new Entity.Food(x, y);
+        let coin = new Entity.Food(x, y, this.config.coins.radius);
         let velocity = Math.random() * velocityMax;
         let angle = Math.random() * 2 * Math.PI;
         coin.xVelocity = velocity * Math.cos(angle);
