@@ -7,21 +7,21 @@ function GameWorld() {
     this.coins = [];
     this.asteroids = [];
     this.dimensions = {
-        width: 3000,
-        height: 1500
+        width: 1600,
+        height: 900
     };
     this.coins = [];
     this.config = {
         tank: {
             maximumSpeed: 10,
             thrustAcceleration: 250, //pixels/s^2
-            friction: 0.8
+            friction: 0.85
         },
         vision: {
             maximumDistance: 200
         },
         bullet: {
-            speed: 700, // per second
+            speed: 600, // per second
             radius: 10,
             maxAge: 1000
         },
@@ -34,7 +34,7 @@ function GameWorld() {
             friction: 0.9
         },
         foodMax: 200,
-        asteroidsMax: 40
+        asteroidsMax: 25
     };
 
     this.lastUpdate = Date.now();
