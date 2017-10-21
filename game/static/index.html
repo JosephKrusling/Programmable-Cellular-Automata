@@ -17,13 +17,13 @@
     	display: none;
         margin: 0;
         position: absolute;
-        background-color: rgba(0, 0, 0, 0.46);
+        background-color: rgba(34, 32, 43, 0.62);
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
         z-index: 1;
-        font: 18px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+        font: 16px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace; /*increase font size to make it easier to read*/
     }
   </style>
 </head>
@@ -57,7 +57,7 @@ processGameTick(); // emit update to the server
 <script src="/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
+    editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/javascript");
 </script>
 <div id="canvas-container">
