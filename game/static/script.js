@@ -33,12 +33,18 @@ function init() {
 
     lastPacketReceived = Date.now();
     socket.on('stateUpdate', function(state) {
+        console.log(`coins: ${JSON.stringify(state.coins).length}`);
+        console.log(`coins2: ${JSON.stringify(state.coins2).length}`);
+        console.log(`coins3: ${JSON.stringify(state.coins3).length}`);
+
+        // console.log(JSON.stringify(state.coins));
+        // console.log(state);
         var timeSincePacket = Date.now() - lastPacketReceived;
-        console.log(`Updated in ${timeSincePacket}`);
+        // console.log(`Updated in ${timeSincePacket}`);
         lastPacketReceived = Date.now();
         tanks = state.tanks;
         bullets = state.bullets;
-        coins = state.coins;
+        coins = decodeTanks(state.coins3);
         asteroids = state.asteroids;
         if (state.dimensions.height !== dimensions.height || state.dimensions.width !== dimensions.width) {
             setTimeout(resizeCanvas, 0);
@@ -73,6 +79,50 @@ function init() {
     window.requestAnimationFrame(draw);
 }
 
+function decodeTanks(string) {
+    var tanks = [];
+    var charsRead = 0;
+    while (charsRead < string.length) {
+        var tank = {};
+        charsRead += decodeFloat32(string, charsRead, tank, 'x');
+        charsRead += decodeFloat32(string, charsRead, tank, 'y');
+        charsRead += decodeFloat32(string, charsRead, tank, 'radius');
+        charsRead += decodeFloat32(string, charsRead, tank, 'xVelocity');
+        charsRead += decodeFloat32(string, charsRead, tank, 'yVelocity');
+        charsRead += decodeFloat32(string, charsRead, tank, 'timeCreated');
+        charsRead += decodeUint8(string, charsRead, tank, 'colorR');
+        charsRead += decodeUint8(string, charsRead, tank, 'colorG');
+        charsRead += decodeUint8(string, charsRead, tank, 'colorB');
+        tanks.push(tank)
+    }
+
+    return tanks;
+}
+
+var decodeUint8 = function( str, offset, obj, propName ) {
+    obj[ propName ] = str.charCodeAt( offset );
+
+    // Number of bytes (characters) read.
+    return 1;
+};
+
+var decodeFloat32 = (function() {
+    var arr  = new Float32Array( 1 );
+    var char = new Uint8Array( arr.buffer );
+    return function( str, offset, obj, propName ) {
+        // Again, pay attention to endianness
+        // here in production code.
+        for ( var i = 0; i < 4; ++i ) {
+            char[i] = str.charCodeAt( offset + i );
+        }
+
+        obj[ propName ] = arr[0];
+
+        // Number of bytes (characters) read.
+        return 4;
+    };
+}());
+
 function draw() {
 
     ctx.globalCompositeOperation = "source-over"; // make front color overwrite
@@ -88,7 +138,7 @@ function draw() {
         var coin = coins[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = coin.color;
+        ctx.shadowColor = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, 1)`;
 
         var timeAdvanced = (Date.now() - lastPacketReceived) / 1000;
         var deltaX = 0;
@@ -101,7 +151,7 @@ function draw() {
         ctx.beginPath();
         ctx.arc(coin.x + deltaX, coin.y + deltaY, coin.radius, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = coin.color;
+        ctx.fillStyle = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, 1)`;
         ctx.fill();
 
         // ctx.font = '12px Arial';

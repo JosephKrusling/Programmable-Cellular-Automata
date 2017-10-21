@@ -4,7 +4,10 @@ function Food(x, y, radius=5)
 {
     Entity.call(this, x, y, radius);
     let colors = colorWheel(y);
-    this.color = `rgba(${colors[0]}, ${colors[1]}, ${colors[2]}, 1)`;
+    this.colorR = colors[0];
+    this.colorG = colors[1];
+    this.colorB = colors[2];
+    this.color = `rgba(${colors[0]}, ${colors[1]}, ${colors[2]}, 1)`; // todo deprecated
 }
 
 Food.prototype = Object.create(Entity.prototype);

@@ -7,6 +7,8 @@ function Tank(x, y, radius, facing, attackCooldown=2000) {
     this.lastAttack = 0;
     this.attackCooldown = attackCooldown;
     this.points = 0;
+
+    
 }
 
 Tank.prototype = Object.create(Entity.prototype);
@@ -35,9 +37,6 @@ Tank.prototype.incrementPoints = function(){
 
 // this tank gets hit and reduces health by 1
 Tank.prototype.getRekt = function (){
-    // send tank to a new random location
-    this.x = Math.random() * 1000; // TODO I hardcoded this because I'm too stupid to figure out how to access with width and height of the canvas, and no, window.canvas.width crashes everything [said tanner on Wed, Oct 18, 2017 at T19:37:35 -5:00]
-    this.y = Math.random() * 1000;
     // reset points
     this.points = 0;
 };

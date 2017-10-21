@@ -4,17 +4,17 @@ const Quadtree = require('./util/Quadtree');
 function GameWorld() {
     this.tanks = [];
     this.bullets = [];
-    this.food = [];
+    this.coins = [];
     this.asteroids = [];
     this.dimensions = {
-        width: 2000,
-        height: 1000
+        width: 3000,
+        height: 1500
     };
-    this.food = [];
+    this.coins = [];
     this.config = {
         tank: {
             maximumSpeed: 10,
-            thrustAcceleration: 200, //pixels/s^2
+            thrustAcceleration: 250, //pixels/s^2
             friction: 0.8
         },
         vision: {
@@ -23,13 +23,13 @@ function GameWorld() {
         bullet: {
             speed: 700, // per second
             radius: 10,
-            maxAge: 2000
+            maxAge: 1000
         },
         coins: {
-            maxAge: 5000
+            maxAge: 15000
         },
         foodMax: 200,
-        asteroidsMax: 20
+        asteroidsMax: 40
     };
 
     this.lastUpdate = Date.now();
@@ -117,6 +117,7 @@ GameWorld.prototype.update = function () {
             if(tank.checkCollision(bullet)) {
                 this.spawnCoinFountain(tank.points/2, tank.x, tank.y, 200);
                 tank.getRekt(); // reset points and respawn
+                this.respawnTank(tank);
             }
             collisions++;
         }
@@ -126,12 +127,13 @@ GameWorld.prototype.update = function () {
             if(tank.checkCollision(asteroid)) {
                 this.spawnCoinFountain(tank.points/2, tank.x, tank.y, 200);
                 tank.getRekt(); // reset points and respawn
+                this.respawnTank(tank);
             }
             collisions++;
         }
 
-        for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
-            let coin = this.food[foodIndex];
+        for (let foodIndex = 0; foodIndex < this.coins.length; foodIndex++) {
+            let coin = this.coins[foodIndex];
             // // coin vacuum
             // let dist2 = tank.distance2(coin);
             // if (dist2 < (this.config.vision.maximumDistance / 2) ** 2) {
@@ -141,7 +143,7 @@ GameWorld.prototype.update = function () {
             //     coin.yVelocity += velocity *= Math.sin(angle);
             // }
             if (tank.checkCollision(coin)) {
-                this.food.splice(foodIndex, 1);
+                this.coins.splice(foodIndex, 1);
                 tank.incrementPoints(); // add point value because we just picked up foodzies
             }
         }
@@ -159,11 +161,11 @@ GameWorld.prototype.update = function () {
         }
     }
 
-    // Make food drift
-    for (let foodIndex = 0; foodIndex < this.food.length; foodIndex++) {
-        let food = this.food[foodIndex];
+    // Make coins drift
+    for (let foodIndex = 0; foodIndex < this.coins.length; foodIndex++) {
+        let food = this.coins[foodIndex];
         if (food.getAge() > this.config.coins.maxAge) {
-            this.food.splice(this.food.indexOf(food), 1);
+            this.coins.splice(this.coins.indexOf(food), 1);
         }
         food.drift(0.1, 10);
         food.x += food.xVelocity * secSinceLastUpdate;
@@ -205,6 +207,14 @@ GameWorld.prototype.deleteTank = function (tank) {
     this.tanks.splice(this.tanks.indexOf(tank), 1);
 };
 
+GameWorld.prototype.respawnTank = function(tank) {
+    let spawn = this.getGoodSpawnPoint();
+    tank.x = spawn.x;
+    tank.y = spawn.y;
+    tank.xVelocity = 0;
+    tank.yVelocity = 0;
+};
+
 GameWorld.prototype.spawnBullet = function(owner, facing, speed) {
     let dist = owner.radius + this.config.bullet.radius;
 
@@ -240,9 +250,54 @@ GameWorld.prototype.spawnCoinFountain = function(quantity, x, y, velocityMax) {
         let angle = Math.random() * 2 * Math.PI;
         coin.xVelocity = velocity * Math.cos(angle);
         coin.yVelocity = velocity * Math.sin(angle);
-        this.food.push(coin);
+        this.coins.push(coin);
     }
 };
+
+GameWorld.prototype.generateViewObject = function() {
+    let state  ={
+        coins2: [],
+        coins3: ''
+    };
+    for (let coinIndex = 0; coinIndex < this.coins.length; coinIndex++) {
+        let coin = this.coins[coinIndex];
+        let msg = '';
+        msg += encodeFloat32(coin.x);
+        msg += encodeFloat32(coin.y);
+        msg += encodeFloat32(coin.radius);
+        msg += encodeFloat32(coin.xVelocity);
+        msg += encodeFloat32(coin.yVelocity);
+        msg += encodeFloat32(coin.timeCreated);
+        msg += encodeUint8(coin.colorR);
+        msg += encodeUint8(coin.colorG);
+        msg += encodeUint8(coin.colorB);
+        state.coins2.push(msg);
+        state.coins3 += msg;
+    }
+    return state;
+};
+
+var encodeUint8 = (function() {
+    var arr = new Uint8Array( 1 );
+    return function( number ) {
+        // If we assume that the number passed in
+        // valid, we can just use it directly.
+        // return String.fromCharCode( number );
+        arr[0] = number;
+        return String.fromCharCode( arr[0] );
+    };
+}());
+
+var encodeFloat32 = (function() {
+    var arr  = new Float32Array( 1 );
+    var char = new Uint8Array( arr.buffer );
+    return function( number ) {
+        arr[0] = number;
+        // In production code, please pay
+        // attention to endianness here.
+        return String.fromCharCode( char[0], char[1], char[2], char[3] );
+    };
+}());
 
 GameWorld.prototype.getWorldSurrounding = function(player) {
     let state = {
@@ -283,8 +338,8 @@ GameWorld.prototype.getWorldSurrounding = function(player) {
     }
     
     // Add nearby coins
-    for (let coinIndex = 0; coinIndex < this.food.length; coinIndex++) {
-        let coin = this.food[coinIndex];
+    for (let coinIndex = 0; coinIndex < this.coins.length; coinIndex++) {
+        let coin = this.coins[coinIndex];
 
         if (coin) {
             let distance2 = player.distance2(coin);
@@ -318,7 +373,7 @@ GameWorld.prototype.getGoodSpawnPoint = function() {
     };
 };
 
-// get a new food object with random coordinates
+// get a new coins object with random coordinates
 GameWorld.prototype.createRandomFood = function()
 {
   return new Entity.Food(Math.random() * this.dimensions.width, Math.random() * this.dimensions.height, 5);

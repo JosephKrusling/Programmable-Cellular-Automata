@@ -88,13 +88,16 @@ function update() {
         })
     });
 
+    let compressed = world.generateViewObject();
     viewerConnections.forEach(function(vc) {
         vc.socket.emit('stateUpdate', {
             dimensions: world.dimensions,
             vision: world.config.vision.maximumDistance,
             tanks: world.tanks,
             bullets: world.bullets,
-            coins: world.food,
+            coins: world.coins,
+            coins2: compressed.coins2,
+            coins3: compressed.coins3,
             asteroids: world.asteroids
         })
     });
