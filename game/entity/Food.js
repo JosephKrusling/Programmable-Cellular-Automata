@@ -7,7 +7,7 @@ function Food(x, y, radius=5)
     this.colorR = colors[0];
     this.colorG = colors[1];
     this.colorB = colors[2];
-    this.colorsA = 255;
+    this.colorA = 1.0;
     this.color = `rgba(${colors[0]}, ${colors[1]}, ${colors[2]}, 1)`; // todo deprecated
 }
 

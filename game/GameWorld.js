@@ -26,7 +26,7 @@ function GameWorld() {
             maxAge: 1000
         },
         coins: {
-            maxAge: 15000,
+            maxAge: 10000,
             asteroidBountyMin: 5,
             asteroidBountyMax: 10,
             asteroidExplosionVelocity: 100,
@@ -178,6 +178,7 @@ GameWorld.prototype.update = function () {
         food.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
         food.xVelocity *= this.config.coins.friction; // todo this is not correct since it decays more for faster updates. fix it
         food.yVelocity *= this.config.coins.friction;
+        food.colorA = 1 - (food.getAge() / this.config.coins.maxAge * 0.9);
     }
 
     // Make asteroids drift and rotate
@@ -263,8 +264,8 @@ GameWorld.prototype.generateViewObject = function() {
     let state  ={
         dimensions: this.dimensions,
         vision: this.config.vision,
-        bullet: {
-            maxAge: this.config.bullet.maxAge
+        config: {
+            bulletMaxAge: this.config.bullet.maxAge
         },
         coins: '',
         tanks: '',
@@ -283,6 +284,7 @@ GameWorld.prototype.generateViewObject = function() {
         msg += encodeUint8(coin.colorR);
         msg += encodeUint8(coin.colorG);
         msg += encodeUint8(coin.colorB);
+        msg += encodeUint8(Math.round(coin.colorA * 255));
         state.coins += msg;
     }
 

@@ -32,9 +32,12 @@ function init() {
     });
 
     lastPacketReceived = Date.now();
+
+    mayDraw = false;
     socket.on('stateUpdate', function(state) {
+        mayDraw = true;
         var timeSincePacket = Date.now() - lastPacketReceived;
-        maxBulletAge = state.bullet.maxAge;
+        serverConfig = state.config;
         lastPacketReceived = Date.now();
         tanks = decodeTanks(state.tanks);
         bullets = decodeBullets(state.bullets);
@@ -89,6 +92,8 @@ function decodeCoins(string) {
         charsRead += decodeUint8(string, charsRead, coin, 'colorR');
         charsRead += decodeUint8(string, charsRead, coin, 'colorG');
         charsRead += decodeUint8(string, charsRead, coin, 'colorB');
+        charsRead += decodeUint8(string, charsRead, coin, 'colorA');
+        coin.colorA /= 255;
         coins.push(coin)
     }
 
@@ -182,9 +187,18 @@ var decodeFloat32 = (function() {
 
 function draw() {
 
+
     ctx.globalCompositeOperation = "source-over"; // make front color overwrite
     ctx.fillStyle = config.graphics.colors.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (!mayDraw) {
+        ctx.font = '48px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.fillText('Connecting to server', 50, 50);
+        setTimeout(draw, 100);
+        return;
+    }
 
     // ctx.globalCompositeOperation = 'lighter'; // make colors add
 
@@ -195,7 +209,7 @@ function draw() {
         var coin = coins[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, 1)`;
+        ctx.shadowColor = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, ${coin.colorA})`;
 
         var timeAdvanced = (Date.now() - lastPacketReceived) / 1000;
         var deltaX = 0;
@@ -208,7 +222,7 @@ function draw() {
         ctx.beginPath();
         ctx.arc(coin.x + deltaX, coin.y + deltaY, coin.radius, 0, 2 * Math.PI);
         ctx.closePath();
-        ctx.fillStyle = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, 1)`;
+        ctx.fillStyle = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, ${coin.colorA})`;
         ctx.fill();
 
         // ctx.font = '12px Arial';
@@ -218,7 +232,7 @@ function draw() {
 
     for (var i = 0; i < bullets.length; i++) {
         var bullet = bullets[i];
-        if (bullet.age + (Date.now() - lastPacketReceived) > maxBulletAge) {
+        if (bullet.age + (Date.now() - lastPacketReceived) > serverConfig.bulletMaxAge) {
             // interpolate expiration of bullets
             continue;
         }
