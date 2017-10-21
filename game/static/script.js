@@ -209,7 +209,7 @@ function draw() {
         var coin = coins[i];
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
-        ctx.shadowColor = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, ${coin.colorA})`;
+        ctx.shadowColor = `rgba(${coin.colorR}, ${coin.colorG}, ${coin.colorB}, 1)`;
 
         var timeAdvanced = (Date.now() - lastPacketReceived) / 1000;
         var deltaX = 0;
