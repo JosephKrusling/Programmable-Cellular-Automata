@@ -69,6 +69,7 @@ io.on('connection', (socket) => {
     });
     socket.on("submittedScript", data => {
         console.log(data.script);
+        console.log(data.name);
         // do stuff with script here
     });
 });

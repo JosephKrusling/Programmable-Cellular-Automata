@@ -82,3 +82,18 @@ body {
 	outline: none;
 	z-index: 2;
 }
+
+#scriptName{
+    display: none;
+    position: absolute;
+    outline: none;
+    resize: none;
+    margin-top: 10%;
+    right: 5%;
+    background-image: none;
+    border-radius: 7px;
+    padding-right: 8px;
+    padding-left: 8px;
+    cursor: pointer;
+    z-index: 2;
+}

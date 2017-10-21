@@ -63,7 +63,9 @@ processGameTick(); // emit update to the server
 <div id="canvas-container">
 	<canvas id="canvas">Please upgrade to a modern browser.</canvas>
 	<button id="submitScript">Submit a Script</button>
-	<button id="finalizeScript">Submit</button>
+    <button id="finalizeScript">Submit</button>
+    <textarea id="scriptName" placeholder="Enter bot name" cols="20"
+    maxlength="20" minlength="3" ></textarea>
 </div>
 <script src="./socket.io/socket.io.js"></script>
 <script src="script.js"></script>

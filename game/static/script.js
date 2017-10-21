@@ -371,6 +371,7 @@ init();
 const editorDiv = document.getElementById("editor");
 const submitScriptBtn = document.getElementById("submitScript");
 const finalizeScriptBtn = document.getElementById("finalizeScript");
+const scriptNameTxtArea = document.getElementById("scriptName");
 
 submitScriptBtn.addEventListener(
     "click",
@@ -378,6 +379,7 @@ submitScriptBtn.addEventListener(
         editorDiv.style.display = "inline";
         submitScriptBtn.style.display = "none";
         finalizeScriptBtn.style.display = "inline";
+        scriptNameTxtArea.style.display = "inline";
     },
     false
 );
@@ -388,7 +390,12 @@ finalizeScriptBtn.addEventListener(
         editorDiv.style.display = "none";
         submitScriptBtn.style.display = "inline";
         finalizeScriptBtn.style.display = "none";
-        socket.emit("submittedScript", { script: editor.getValue() });
+        scriptNameTxtArea.style.display = "none";
+        let scriptName = scriptNameTxtArea.value;
+        // console.log("ScriptName: ");
+        // console.log(scriptName);
+
+        socket.emit("submittedScript", { script: editor.getValue(), name: scriptName });
     },
     false
 );
