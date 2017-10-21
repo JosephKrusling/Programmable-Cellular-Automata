@@ -344,7 +344,8 @@ function draw() {
         ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.textAlign="center";
         ctx.font = '24px Arial';
-        ctx.fillText(`${tank.name}`,tank.x + deltaX, tank.y + deltaY - 20);
+        ctx.fillText(`${tank.name}`,tank.x + deltaX, tank.y + deltaY - 40);
+        ctx.fillText(`${tank.points} Points`,tank.x + deltaX, tank.y + deltaY - 15);
 
         // draw tank's x and y coordinates
         if (config.debugText) {
