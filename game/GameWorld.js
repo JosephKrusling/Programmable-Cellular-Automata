@@ -23,7 +23,7 @@ function GameWorld() {
         bullet: {
             speed: 700, // per second
             radius: 10,
-            maxAge: 1000
+            maxAge: 5000
         },
         coins: {
             maxAge: 10000,

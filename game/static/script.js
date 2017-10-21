@@ -37,6 +37,7 @@ function init() {
     socket.on('stateUpdate', function(state) {
         mayDraw = true;
         var timeSincePacket = Date.now() - lastPacketReceived;
+        console.log(timeSincePacket);
         serverConfig = state.config;
         lastPacketReceived = Date.now();
         tanks = decodeTanks(state.tanks);
