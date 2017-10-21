@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const runnerServer = require('socket.io-client')('http://localhost:3001/');
 const Entity = require('./entity');
 const PlayerConnection = require('./PlayerConnection');
 const ViewerConnection = require('./ViewerConnection');
@@ -26,6 +27,22 @@ console.log(__dirname);
 // app.get('/', (req, res) => {
 //     res.sendFile(__dirname + "/static/index.html");
 // });
+
+runnerServer.on('connect', () => {
+    console.log('Connected to runner server! Ready to send it scripts.')
+});
+
+runnerServer.on('disconnect', () => {
+   console.log('Disconnected from runner server!');
+});
+
+runnerServer.on('announceProcessDeath', (processName) => {
+    console.log(`Terminated bot "${processName}" to make room.`);
+    viewerConnections.forEach(function(vc) {
+        vc.socket.emit('chat', `Our beloved ${processName} was terminated to make room for a new bot.`)
+    });
+});
+
 
 io.on('connection', (socket) => {
     socket.on('disconnect', () => {
@@ -68,7 +85,9 @@ io.on('connection', (socket) => {
         socket.playerConnection.player.desiredMove = packet.desiredMove;
     });
     socket.on("submittedScript", data => {
-        console.log(data.script);
+        data.name = 'bobbyboye';
+        console.log(data);
+        runnerServer.emit('runScript', data);
         // do stuff with script here
     });
 });

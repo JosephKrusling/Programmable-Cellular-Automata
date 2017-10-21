@@ -4,7 +4,16 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const yargs = require('yargs');
 const path = require('path');
+const fs = require('fs');
 const argv = yargs.argv;
+const randomstring = require('randomstring');
+const { spawn } = require('child_process');
+
+const config = {
+    concurrentScriptMaximum: 5
+};
+
+let activeProcesses = [];
 
 app.get('/', function(req, res) {
     red.send('What are you doing?')
@@ -12,23 +21,44 @@ app.get('/', function(req, res) {
 
 io.on('connection', (socket) => {
     console.log('new connection');
+
+    socket.on('runScript', (data) => {
+
+        // Save the script to disk
+        console.log('Saving new script');
+        let scriptID = randomstring.generate(16) + '.js';
+        let scriptSavePath = path.join(__dirname, '../userScripts', scriptID)
+        fs.writeFile(scriptSavePath, data.script);
+
+        // Kill the oldest process if there is one
+        if (activeProcesses.length >= config.concurrentScriptMaximum) {
+            let victim = activeProcesses.shift();
+            victim.kill();
+            socket.emit('announceProcessDeath', victim.uniqueIdentifier);
+        }
+
+        // Start a new script runner
+        const scriptRunnerProcess = spawn('node', ['scriptRunner', '--server-url=http://localhost:3000', '--script=' + scriptID]);
+
+        scriptRunnerProcess.uniqueIdentifier = data.name;
+
+        scriptRunnerProcess.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+
+        scriptRunnerProcess.stderr.on('data', (data) => {
+            console.log(`stderr: ${data}`);
+        });
+
+        scriptRunnerProcess.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+
+        activeProcesses.push(scriptRunnerProcess);
+    });
 });
+
 
 http.listen(3001, () => {
     console.log('listening');
 });
-//
-// const { spawn } = require('child_process');
-// const ls = spawn('node', ['scriptRunner', '--server-url=http://localhost:3000', '--script=example.js']);
-//
-// ls.stdout.on('data', (data) => {
-//     console.log(`stdout: ${data}`);
-// });
-//
-// ls.stderr.on('data', (data) => {
-//     console.log(`stderr: ${data}`);
-// });
-//
-// ls.on('close', (code) => {
-//     console.log(`child process exited with code ${code}`);
-// });
