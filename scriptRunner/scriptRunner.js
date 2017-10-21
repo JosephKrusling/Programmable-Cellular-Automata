@@ -1,14 +1,13 @@
 const {VM, VMScript} = require('vm2');
 const fs = require('fs');
-const socket = require('socket.io-client')('http://cs4003.xyz/');
+const yargs = require('yargs');
+const path = require('path');
+const argv = yargs.argv;
+console.log(argv);
+const socket = require('socket.io-client')(argv['server-url']);
+let scriptPath = path.join(__dirname, '../userScripts', argv.script)
 
-
-
-socket.on('connect', () => {
-    socket.emit('type', 'player');
-});
-
-let scriptSource = fs.readFileSync('./example.js', {encoding: 'utf8'});
+let scriptSource = fs.readFileSync(scriptPath, {encoding: 'utf8'});
 
 const script = new VMScript(scriptSource);
 
@@ -24,6 +23,10 @@ let vm = new VM({
             console.log(text);
         }
     }
+});
+
+socket.on('connect', () => {
+    socket.emit('type', 'player');
 });
 
 socket.on('tick', (arg) => {
@@ -45,3 +48,5 @@ socket.on('tick', (arg) => {
         socket.emit('scriptError', e);
     }
 });
+
+
