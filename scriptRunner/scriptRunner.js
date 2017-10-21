@@ -3,7 +3,6 @@ const fs = require('fs');
 const yargs = require('yargs');
 const path = require('path');
 const argv = yargs.argv;
-console.log(argv);
 const socket = require('socket.io-client')(argv['server-url']);
 let scriptPath = path.join(__dirname, '../userScripts', argv.script)
 
