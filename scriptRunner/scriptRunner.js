@@ -5,6 +5,7 @@ const path = require('path');
 const argv = yargs.argv;
 const socket = require('socket.io-client')(argv['server-url']);
 let scriptPath = path.join(__dirname, '../userScripts', argv.script)
+let botName = argv['bot-name'];
 
 let scriptSource = fs.readFileSync(scriptPath, {encoding: 'utf8'});
 
@@ -39,6 +40,7 @@ socket.on('tick', (arg) => {
 
         packet.executionTime = process.hrtime(startTime)[1]/1000000; // milliseconds
         packet.desiredMove = scriptResult;
+        packet.botName = botName;
 
         // console.log(`Executed: ${packet.executionTime}`);
         socket.emit('action', packet);

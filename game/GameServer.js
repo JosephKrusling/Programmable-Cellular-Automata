@@ -83,11 +83,10 @@ io.on('connection', (socket) => {
         // This desired move is processed in GameWorld.update.
         // It will be unset after it is processed.
         socket.playerConnection.player.desiredMove = packet.desiredMove;
+        socket.playerConnection.player.name = packet.botName;
     });
     socket.on("submittedScript", data => {
         console.log(data.name);
-        data.name = 'bobbyboye';
-        console.log(data);
         runnerServer.emit('runScript', data);
         // do stuff with script here
     });

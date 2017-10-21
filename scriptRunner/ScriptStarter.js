@@ -24,9 +24,9 @@ io.on('connection', (socket) => {
     socket.on('runScript', (data) => {
 
         // Save the script to disk
-        console.log('Saving new script');
         let scriptID = randomstring.generate(16) + '.js';
-        let scriptSavePath = path.join(__dirname, '../userScripts', scriptID)
+        let scriptSavePath = path.join(__dirname, '../userScripts', scriptID);
+        console.log(`Saving script with ID ${scriptID}`);
         fs.writeFile(scriptSavePath, data.script);
 
         // Kill the oldest process if there is one
@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
         }
 
         // Start a new script runner
-        const scriptRunnerProcess = spawn('node', ['scriptRunner', '--server-url=http://localhost:3000', '--script=' + scriptID]);
+        const scriptRunnerProcess = spawn('node', ['scriptRunner', '--server-url=http://localhost:3000', '--script=' + scriptID, '--bot-name=' + data.name]);
 
         scriptRunnerProcess.uniqueIdentifier = data.name;
 

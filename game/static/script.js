@@ -7,7 +7,7 @@ function init() {
     ctx = canvas.getContext('2d');
     config = {
         interpolation: true,
-        debugText: true,
+        debugText: false,
         graphics: {
             colors: {
                 background: 'rgba(15,15,30,1)'
@@ -116,6 +116,10 @@ function decodeTanks(string) {
         charsRead += decodeFloat32(string, charsRead, tank, 'yVelocity');
         charsRead += decodeFloat32(string, charsRead, tank, 'timeCreated');
         charsRead += decodeFloat32(string, charsRead, tank, 'points');
+        charsRead += decodeUint8(string, charsRead, tank, 'nameLength');
+        console.log('nameLength: ' + tank.nameLength);
+        tank.name = (string.substring(charsRead, charsRead + tank.nameLength));
+        charsRead += tank.nameLength;
         tanks.push(tank)
     }
 
@@ -336,6 +340,11 @@ function draw() {
         ctx.closePath();
         ctx.fillStyle = 'rgba(0, 128, 255, 1)';
         ctx.fill();
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.textAlign="center";
+        ctx.font = '24px Arial';
+        ctx.fillText(`${tank.name}`,tank.x + deltaX, tank.y + deltaY - 20);
 
         // draw tank's x and y coordinates
         if (config.debugText) {

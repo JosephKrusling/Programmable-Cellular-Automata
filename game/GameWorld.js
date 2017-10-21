@@ -7,8 +7,8 @@ function GameWorld() {
     this.coins = [];
     this.asteroids = [];
     this.dimensions = {
-        width: 2400,
-        height: 1260
+        width: 1920,
+        height: 1080
     };
     this.coins = [];
     this.config = {
@@ -18,7 +18,7 @@ function GameWorld() {
             friction: 0.85
         },
         vision: {
-            maximumDistance: 200
+            maximumDistance: 300
         },
         bullet: {
             speed: 600, // per second
@@ -28,13 +28,13 @@ function GameWorld() {
         coins: {
             maxAge: 5000,
             radius: 6,
-            asteroidBountyMin: 5,
-            asteroidBountyMax: 10,
+            asteroidBountyMin: 10,
+            asteroidBountyMax: 20,
             asteroidExplosionVelocity: 100,
             friction: 0.9
         },
         foodMax: 200,
-        asteroidsMax: 25
+        asteroidsMax: 35
     };
 
     this.lastUpdate = Date.now();
@@ -185,7 +185,7 @@ GameWorld.prototype.update = function () {
     // Make asteroids drift and rotate
     for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
         let asteroid = this.asteroids[asteroidIndex];
-        asteroid.drift(0.3 * secSinceLastUpdate, 10);
+        asteroid.drift(0.3 * secSinceLastUpdate, 20);
         asteroid.x += asteroid.xVelocity * secSinceLastUpdate;
         asteroid.y += asteroid.yVelocity * secSinceLastUpdate;
         asteroid.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
@@ -300,6 +300,11 @@ GameWorld.prototype.generateViewObject = function() {
         msg += encodeFloat32(tank.yVelocity);
         msg += encodeFloat32(tank.timeCreated);
         msg += encodeFloat32(tank.points);
+        if (tank.name.length > 20) {
+            tank.name = tank.name.substring(0, 20);
+        }
+        msg += encodeUint8(tank.name.length);
+        msg += tank.name;
         state.tanks += msg;
     }
 

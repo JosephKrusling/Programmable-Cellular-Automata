@@ -7,6 +7,7 @@ function Tank(x, y, radius, facing, attackCooldown=1000) {
     this.lastAttack = 0;
     this.attackCooldown = attackCooldown;
     this.points = 0;
+    this.name = "Unnamed";
 
     
 }
