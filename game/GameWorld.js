@@ -23,10 +23,10 @@ function GameWorld() {
         bullet: {
             speed: 700, // per second
             radius: 10,
-            maxAge: 5000
+            maxAge: 1000
         },
         coins: {
-            maxAge: 10000,
+            maxAge: 5000,
             radius: 6,
             asteroidBountyMin: 5,
             asteroidBountyMax: 10,
