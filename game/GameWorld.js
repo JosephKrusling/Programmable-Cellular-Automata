@@ -26,7 +26,11 @@ function GameWorld() {
             maxAge: 1000
         },
         coins: {
-            maxAge: 15000
+            maxAge: 15000,
+            asteroidBountyMin: 5,
+            asteroidBountyMax: 10,
+            asteroidExplosionVelocity: 100,
+            friction: 0.9
         },
         foodMax: 200,
         asteroidsMax: 40
@@ -53,6 +57,7 @@ GameWorld.prototype.update = function () {
         let bullet = this.bullets[bulletIndex];
         if (bullet.getAge() > this.config.bullet.maxAge) {
             this.bullets.splice(bulletIndex, 1);
+            continue;
         }
 
         let distance = bullet.speed * msSinceLastUpdate / 1000;
@@ -171,8 +176,8 @@ GameWorld.prototype.update = function () {
         food.x += food.xVelocity * secSinceLastUpdate;
         food.y += food.yVelocity * secSinceLastUpdate;
         food.enforceBounds(0, 0, this.dimensions.width, this.dimensions.height);
-        food.xVelocity *= 0.9; // todo this is not correct since it decays more for faster updates. fix it
-        food.yVelocity *= 0.9;
+        food.xVelocity *= this.config.coins.friction; // todo this is not correct since it decays more for faster updates. fix it
+        food.yVelocity *= this.config.coins.friction;
     }
 
     // Make asteroids drift and rotate
@@ -238,7 +243,7 @@ GameWorld.prototype.spawnAsteroid = function() {
 };
 
 GameWorld.prototype.killAsteroid = function(asteroid) {
-    this.spawnCoinFountain(10, asteroid.x, asteroid.y, 160);
+    this.spawnCoinFountain(Math.random() * (this.config.coins.asteroidBountyMax - this.config.coins.asteroidBountyMin) + this.config.coins.asteroidBountyMin, asteroid.x, asteroid.y, this.config.coins.asteroidExplosionVelocity);
     this.asteroids.splice(this.asteroids.indexOf(asteroid), 1);
     this.spawnAsteroid();
 };
