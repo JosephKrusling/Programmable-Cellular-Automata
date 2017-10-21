@@ -64,7 +64,11 @@ io.on('connection', (socket) => {
         // This desired move is processed in GameWorld.update.
         // It will be unset after it is processed.
         socket.playerConnection.player.desiredMove = packet.desiredMove;
-    })
+    });
+    socket.on("submittedScript", data => {
+        console.log(data.script);
+        // do stuff with script here
+    });
 });
 
 http.listen(3000, () => {

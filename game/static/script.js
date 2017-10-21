@@ -367,3 +367,28 @@ function draw() {
 
 
 init();
+
+const editorDiv = document.getElementById("editor");
+const submitScriptBtn = document.getElementById("submitScript");
+const finalizeScriptBtn = document.getElementById("finalizeScript");
+
+submitScriptBtn.addEventListener(
+    "click",
+    function() {
+        editorDiv.style.display = "inline";
+        submitScriptBtn.style.display = "none";
+        finalizeScriptBtn.style.display = "inline";
+    },
+    false
+);
+
+finalizeScriptBtn.addEventListener(
+    "click",
+    function() {
+        editorDiv.style.display = "none";
+        submitScriptBtn.style.display = "inline";
+        finalizeScriptBtn.style.display = "none";
+        socket.emit("submittedScript", { script: editor.getValue() });
+    },
+    false
+);

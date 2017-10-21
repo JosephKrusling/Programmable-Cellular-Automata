@@ -1,18 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <meta charset="UTF-8">
     <title>Title</title>
 
     <link rel="stylesheet" type="text/css" href="./style.css">
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
 
-
+    #editor {
+    	display: none;
+        margin: 0;
+        position: absolute;
+        background-color: transparent;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+    }
+  </style>
 </head>
 <body>
-<canvas id="canvas">Please upgrade to a modern browser.</canvas>
+
+<pre id="editor">function foo(items) {
+    var i;
+    for (i = 0; i &lt; items.length; i++) {
+        alert("Ace Rocks " + items[i]);
+    }
+}</pre>
+
+<script src="/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/javascript");
+</script>
+<div id="canvas-container">
+	<canvas id="canvas">Please upgrade to a modern browser.</canvas>
+	<button id="submitScript">Submit a Script</button>
+	<button id="finalizeScript">Submit</button>
+</div>
 <script src="./socket.io/socket.io.js"></script>
 <script src="script.js"></script>
-
 </body>
 </html>
