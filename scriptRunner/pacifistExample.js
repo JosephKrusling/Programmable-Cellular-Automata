@@ -4,7 +4,7 @@ var state = getState();
 
 function processGameTick() {
     let shoot = false; // by default do not shoot
-    let facing = 0; // direction in which we are facing
+    let facing = 0; // direction in which we are facing (radians)
     let target = {x:0, y:0};
     let thrust = true;
 
