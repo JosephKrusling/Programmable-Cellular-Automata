@@ -7,8 +7,8 @@ function GameWorld() {
     this.coins = [];
     this.asteroids = [];
     this.dimensions = {
-        width: 1600,
-        height: 900
+        width: 2400,
+        height: 1260
     };
     this.coins = [];
     this.config = {
