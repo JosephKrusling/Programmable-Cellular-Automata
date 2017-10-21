@@ -93,12 +93,10 @@ function update() {
         vc.socket.emit('stateUpdate', {
             dimensions: world.dimensions,
             vision: world.config.vision.maximumDistance,
-            tanks: world.tanks,
-            bullets: world.bullets,
-            coins: world.coins,
-            coins2: compressed.coins2,
-            coins3: compressed.coins3,
-            asteroids: world.asteroids
+            tanks: compressed.tanks,
+            bullets: compressed.bullets,
+            coins: compressed.coins, // slowly moving over toward compressed implementation
+            asteroids: compressed.asteroids
         })
     });
 }

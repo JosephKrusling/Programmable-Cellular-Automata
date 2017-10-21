@@ -33,19 +33,12 @@ function init() {
 
     lastPacketReceived = Date.now();
     socket.on('stateUpdate', function(state) {
-        console.log(`coins: ${JSON.stringify(state.coins).length}`);
-        console.log(`coins2: ${JSON.stringify(state.coins2).length}`);
-        console.log(`coins3: ${JSON.stringify(state.coins3).length}`);
-
-        // console.log(JSON.stringify(state.coins));
-        // console.log(state);
         var timeSincePacket = Date.now() - lastPacketReceived;
-        // console.log(`Updated in ${timeSincePacket}`);
         lastPacketReceived = Date.now();
-        tanks = state.tanks;
-        bullets = state.bullets;
-        coins = decodeTanks(state.coins3);
-        asteroids = state.asteroids;
+        tanks = decodeTanks(state.tanks);
+        bullets = decodeBullets(state.bullets);
+        coins = decodeCoins(state.coins);
+        asteroids = decodeAsteroids(state.asteroids);
         if (state.dimensions.height !== dimensions.height || state.dimensions.width !== dimensions.width) {
             setTimeout(resizeCanvas, 0);
         }
@@ -79,7 +72,31 @@ function init() {
     window.requestAnimationFrame(draw);
 }
 
+function decodeCoins(string) {
+    if (string === undefined)
+        return [];
+    var coins = [];
+    var charsRead = 0;
+    while (charsRead < string.length) {
+        var coin = {};
+        charsRead += decodeFloat32(string, charsRead, coin, 'x');
+        charsRead += decodeFloat32(string, charsRead, coin, 'y');
+        charsRead += decodeFloat32(string, charsRead, coin, 'radius');
+        charsRead += decodeFloat32(string, charsRead, coin, 'xVelocity');
+        charsRead += decodeFloat32(string, charsRead, coin, 'yVelocity');
+        charsRead += decodeFloat32(string, charsRead, coin, 'timeCreated');
+        charsRead += decodeUint8(string, charsRead, coin, 'colorR');
+        charsRead += decodeUint8(string, charsRead, coin, 'colorG');
+        charsRead += decodeUint8(string, charsRead, coin, 'colorB');
+        coins.push(coin)
+    }
+
+    return coins;
+}
+
 function decodeTanks(string) {
+    if (string === undefined)
+        return [];
     var tanks = [];
     var charsRead = 0;
     while (charsRead < string.length) {
@@ -87,16 +104,55 @@ function decodeTanks(string) {
         charsRead += decodeFloat32(string, charsRead, tank, 'x');
         charsRead += decodeFloat32(string, charsRead, tank, 'y');
         charsRead += decodeFloat32(string, charsRead, tank, 'radius');
+        charsRead += decodeFloat32(string, charsRead, tank, 'facing');
         charsRead += decodeFloat32(string, charsRead, tank, 'xVelocity');
         charsRead += decodeFloat32(string, charsRead, tank, 'yVelocity');
         charsRead += decodeFloat32(string, charsRead, tank, 'timeCreated');
-        charsRead += decodeUint8(string, charsRead, tank, 'colorR');
-        charsRead += decodeUint8(string, charsRead, tank, 'colorG');
-        charsRead += decodeUint8(string, charsRead, tank, 'colorB');
+        charsRead += decodeFloat32(string, charsRead, tank, 'points');
         tanks.push(tank)
     }
 
     return tanks;
+}
+
+function decodeAsteroids(string) {
+    if (string === undefined)
+        return [];
+    var asteroids = [];
+    var charsRead = 0;
+    while (charsRead < string.length) {
+        var asteroid = {};
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'x');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'y');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'radius');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'facing');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'xVelocity');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'yVelocity');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'angularVelocity');
+        charsRead += decodeFloat32(string, charsRead, asteroid, 'timeCreated');
+        asteroids.push(asteroid)
+    }
+
+    return asteroids;
+}
+
+function decodeBullets(string) {
+    if (string === undefined)
+        return [];
+    var bullets = [];
+    var charsRead = 0;
+    while (charsRead < string.length) {
+        var bullet = {};
+        charsRead += decodeFloat32(string, charsRead, bullet, 'x');
+        charsRead += decodeFloat32(string, charsRead, bullet, 'y');
+        charsRead += decodeFloat32(string, charsRead, bullet, 'radius');
+        charsRead += decodeFloat32(string, charsRead, bullet, 'facing');
+        charsRead += decodeFloat32(string, charsRead, bullet, 'speed');
+        charsRead += decodeFloat32(string, charsRead, bullet, 'timeCreated');
+        bullets.push(bullet)
+    }
+
+    return bullets;
 }
 
 var decodeUint8 = function( str, offset, obj, propName ) {

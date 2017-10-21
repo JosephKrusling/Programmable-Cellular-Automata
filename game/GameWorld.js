@@ -256,8 +256,10 @@ GameWorld.prototype.spawnCoinFountain = function(quantity, x, y, velocityMax) {
 
 GameWorld.prototype.generateViewObject = function() {
     let state  ={
-        coins2: [],
-        coins3: ''
+        coins: '',
+        tanks: '',
+        asteroids: '',
+        bullets: ''
     };
     for (let coinIndex = 0; coinIndex < this.coins.length; coinIndex++) {
         let coin = this.coins[coinIndex];
@@ -271,8 +273,47 @@ GameWorld.prototype.generateViewObject = function() {
         msg += encodeUint8(coin.colorR);
         msg += encodeUint8(coin.colorG);
         msg += encodeUint8(coin.colorB);
-        state.coins2.push(msg);
-        state.coins3 += msg;
+        state.coins += msg;
+    }
+
+    for (let tankIndex = 0; tankIndex < this.tanks.length; tankIndex++) {
+        let tank = this.tanks[tankIndex];
+        let msg = '';
+        msg += encodeFloat32(tank.x);
+        msg += encodeFloat32(tank.y);
+        msg += encodeFloat32(tank.radius);
+        msg += encodeFloat32(tank.facing);
+        msg += encodeFloat32(tank.xVelocity);
+        msg += encodeFloat32(tank.yVelocity);
+        msg += encodeFloat32(tank.timeCreated);
+        msg += encodeFloat32(tank.points);
+        state.tanks += msg;
+    }
+
+    for (let asteroidIndex = 0; asteroidIndex < this.asteroids.length; asteroidIndex++) {
+        let asteroid = this.asteroids[asteroidIndex];
+        let msg = '';
+        msg += encodeFloat32(asteroid.x);
+        msg += encodeFloat32(asteroid.y);
+        msg += encodeFloat32(asteroid.radius);
+        msg += encodeFloat32(asteroid.facing);
+        msg += encodeFloat32(asteroid.xVelocity);
+        msg += encodeFloat32(asteroid.yVelocity);
+        msg += encodeFloat32(asteroid.angularVelocity);
+        msg += encodeFloat32(asteroid.timeCreated);
+        state.asteroids += msg;
+    }
+
+    for (let bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++) {
+        let bullet = this.bullets[bulletIndex];
+        let msg = '';
+        msg += encodeFloat32(bullet.x);
+        msg += encodeFloat32(bullet.y);
+        msg += encodeFloat32(bullet.radius);
+        msg += encodeFloat32(bullet.facing);
+        msg += encodeFloat32(bullet.speed);
+        msg += encodeFloat32(bullet.timeCreated);
+        state.bullets += msg;
     }
     return state;
 };
