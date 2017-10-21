@@ -5,7 +5,6 @@ const io = require('socket.io')(http);
 const yargs = require('yargs');
 const path = require('path');
 const fs = require('fs');
-const argv = yargs.argv;
 const randomstring = require('randomstring');
 const { spawn } = require('child_process');
 
