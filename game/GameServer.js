@@ -5,6 +5,7 @@ const io = require('socket.io')(http);
 const Entity = require('./entity');
 const PlayerConnection = require('./PlayerConnection');
 const ViewerConnection = require('./ViewerConnection');
+const path = require('path');
 
 const GameWorld = require('./GameWorld');
 const world = new GameWorld();
@@ -19,7 +20,8 @@ let playerConnections = [];
 let viewerConnections = [];
 
 app.set('port, 80');
-app.use(express.static('static'));
+app.use(express.static(path.join(__dirname, 'static')));
+console.log(__dirname);
 
 // app.get('/', (req, res) => {
 //     res.sendFile(__dirname + "/static/index.html");
