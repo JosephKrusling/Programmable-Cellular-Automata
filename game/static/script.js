@@ -34,6 +34,7 @@ function init() {
     lastPacketReceived = Date.now();
     socket.on('stateUpdate', function(state) {
         var timeSincePacket = Date.now() - lastPacketReceived;
+        maxBulletAge = state.bullet.maxAge;
         lastPacketReceived = Date.now();
         tanks = decodeTanks(state.tanks);
         bullets = decodeBullets(state.bullets);
@@ -148,7 +149,7 @@ function decodeBullets(string) {
         charsRead += decodeFloat32(string, charsRead, bullet, 'radius');
         charsRead += decodeFloat32(string, charsRead, bullet, 'facing');
         charsRead += decodeFloat32(string, charsRead, bullet, 'speed');
-        charsRead += decodeFloat32(string, charsRead, bullet, 'timeCreated');
+        charsRead += decodeFloat32(string, charsRead, bullet, 'age');
         bullets.push(bullet)
     }
 
@@ -217,6 +218,10 @@ function draw() {
 
     for (var i = 0; i < bullets.length; i++) {
         var bullet = bullets[i];
+        if (bullet.age + (Date.now() - lastPacketReceived) > maxBulletAge) {
+            // interpolate expiration of bullets
+            continue;
+        }
         // console.log(JSON.stringify(bullet));
         ctx.shadowBlur = 15;
         ctx.shadowColor = 'rgba(255, 255, 255, 1)';

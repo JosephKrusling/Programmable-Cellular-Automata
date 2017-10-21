@@ -90,14 +90,7 @@ function update() {
 
     let compressed = world.generateViewObject();
     viewerConnections.forEach(function(vc) {
-        vc.socket.emit('stateUpdate', {
-            dimensions: world.dimensions,
-            vision: world.config.vision.maximumDistance,
-            tanks: compressed.tanks,
-            bullets: compressed.bullets,
-            coins: compressed.coins, // slowly moving over toward compressed implementation
-            asteroids: compressed.asteroids
-        })
+        vc.socket.emit('stateUpdate', compressed)
     });
 }
 update();

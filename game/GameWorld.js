@@ -261,6 +261,11 @@ GameWorld.prototype.spawnCoinFountain = function(quantity, x, y, velocityMax) {
 
 GameWorld.prototype.generateViewObject = function() {
     let state  ={
+        dimensions: this.dimensions,
+        vision: this.config.vision,
+        bullet: {
+            maxAge: this.config.bullet.maxAge
+        },
         coins: '',
         tanks: '',
         asteroids: '',
@@ -317,7 +322,7 @@ GameWorld.prototype.generateViewObject = function() {
         msg += encodeFloat32(bullet.radius);
         msg += encodeFloat32(bullet.facing);
         msg += encodeFloat32(bullet.speed);
-        msg += encodeFloat32(bullet.timeCreated);
+        msg += encodeFloat32(bullet.getAge());
         state.bullets += msg;
     }
     return state;
