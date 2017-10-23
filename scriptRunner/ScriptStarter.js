@@ -9,7 +9,7 @@ const randomstring = require('randomstring');
 const { spawn } = require('child_process');
 
 const config = {
-    concurrentScriptMaximum: 5
+    concurrentScriptMaximum: 10
 };
 
 let activeProcesses = [];
@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
         }
 
         // Start a new script runner
-        const scriptRunnerProcess = spawn('node', ['scriptRunner', '--server-url=http://localhost:3000', '--script=' + scriptID, '--bot-name=' + data.name]);
+        const scriptRunnerProcess = spawn('node', ['scriptRunner', '--server-url=http://cs4003.xyz/', '--script=' + scriptID, '--bot-name=' + data.name]);
 
         scriptRunnerProcess.uniqueIdentifier = data.name;
 
