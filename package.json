@@ -10,8 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.2",
+    "randomstring": "^1.1.5",
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
-    "vm2": "^3.5.2"
+    "vm2": "^3.5.2",
+    "yargs": "^9.0.1"
   }
 }

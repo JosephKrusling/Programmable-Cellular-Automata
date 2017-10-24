@@ -7,7 +7,7 @@ function init() {
     ctx = canvas.getContext('2d');
     config = {
         interpolation: true,
-        debugText: true,
+        debugText: false,
         graphics: {
             colors: {
                 background: 'rgba(15,15,30,1)'
@@ -116,6 +116,10 @@ function decodeTanks(string) {
         charsRead += decodeFloat32(string, charsRead, tank, 'yVelocity');
         charsRead += decodeFloat32(string, charsRead, tank, 'timeCreated');
         charsRead += decodeFloat32(string, charsRead, tank, 'points');
+        charsRead += decodeUint8(string, charsRead, tank, 'nameLength');
+        console.log('nameLength: ' + tank.nameLength);
+        tank.name = (string.substring(charsRead, charsRead + tank.nameLength));
+        charsRead += tank.nameLength;
         tanks.push(tank)
     }
 
@@ -340,6 +344,12 @@ function draw() {
         }
 
 
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.textAlign="center";
+        ctx.font = '24px Arial';
+        ctx.fillText(`${tank.name}`,tank.x + deltaX, tank.y + deltaY - 40);
+        ctx.fillText(`${tank.points} Points`,tank.x + deltaX, tank.y + deltaY - 15);
+
         // draw tank's x and y coordinates
         if (config.debugText) {
             ctx.fillStyle = 'rgba(255, 255, 255, 1)';
@@ -370,3 +380,35 @@ function draw() {
 
 
 init();
+
+const editorDiv = document.getElementById("editor");
+const submitScriptBtn = document.getElementById("submitScript");
+const finalizeScriptBtn = document.getElementById("finalizeScript");
+const scriptNameTxtArea = document.getElementById("scriptName");
+
+submitScriptBtn.addEventListener(
+    "click",
+    function() {
+        editorDiv.style.display = "inline";
+        submitScriptBtn.style.display = "none";
+        finalizeScriptBtn.style.display = "inline";
+        scriptNameTxtArea.style.display = "inline";
+    },
+    false
+);
+
+finalizeScriptBtn.addEventListener(
+    "click",
+    function() {
+        editorDiv.style.display = "none";
+        submitScriptBtn.style.display = "inline";
+        finalizeScriptBtn.style.display = "none";
+        scriptNameTxtArea.style.display = "none";
+        let scriptName = scriptNameTxtArea.value;
+        // console.log("ScriptName: ");
+        // console.log(scriptName);
+
+        socket.emit("submittedScript", { script: editor.getValue(), name: scriptName });
+    },
+    false
+);

@@ -2,16 +2,18 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const runnerServer = require('socket.io-client')('http://52.14.106.63:3001/');
 const Entity = require('./entity');
 const PlayerConnection = require('./PlayerConnection');
 const ViewerConnection = require('./ViewerConnection');
+const path = require('path');
 
 const GameWorld = require('./GameWorld');
 const world = new GameWorld();
 
 const config = {
     network: {
-        tickFrequency: 100
+        tickFrequency: 150
     }
 };
 
@@ -19,11 +21,28 @@ let playerConnections = [];
 let viewerConnections = [];
 
 app.set('port, 80');
-app.use(express.static('static'));
+app.use(express.static(path.join(__dirname, 'static')));
+console.log(__dirname);
 
 // app.get('/', (req, res) => {
 //     res.sendFile(__dirname + "/static/index.html");
 // });
+
+runnerServer.on('connect', () => {
+    console.log('Connected to runner server! Ready to send it scripts.')
+});
+
+runnerServer.on('disconnect', () => {
+   console.log('Disconnected from runner server!');
+});
+
+runnerServer.on('announceProcessDeath', (processName) => {
+    console.log(`Terminated bot "${processName}" to make room.`);
+    viewerConnections.forEach(function(vc) {
+        vc.socket.emit('chat', `Our beloved ${processName} was terminated to make room for a new bot.`)
+    });
+});
+
 
 io.on('connection', (socket) => {
     socket.on('disconnect', () => {
@@ -64,7 +83,13 @@ io.on('connection', (socket) => {
         // This desired move is processed in GameWorld.update.
         // It will be unset after it is processed.
         socket.playerConnection.player.desiredMove = packet.desiredMove;
-    })
+        socket.playerConnection.player.name = packet.botName;
+    });
+    socket.on("submittedScript", data => {
+        console.log(data.name);
+        runnerServer.emit('runScript', data);
+        // do stuff with script here
+    });
 });
 
 http.listen(3000, () => {
