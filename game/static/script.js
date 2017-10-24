@@ -331,11 +331,14 @@ function draw() {
         ctx.fill();
 
         // draw the tank
-        ctx.beginPath();
-        ctx.arc(tank.x + deltaX, tank.y + deltaY, tank.radius, 0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 128, 255, 1)';
-        ctx.fill();
+        if (tank.radius > 0.1) {
+            ctx.beginPath();
+            ctx.arc(tank.x + deltaX, tank.y + deltaY, tank.radius, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 128, 255, 1)';
+            ctx.fill();
+        }
+
 
         // draw tank's x and y coordinates
         if (config.debugText) {
