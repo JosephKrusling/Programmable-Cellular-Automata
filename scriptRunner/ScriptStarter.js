@@ -9,7 +9,7 @@ const randomstring = require('randomstring');
 const { spawn } = require('child_process');
 
 const config = {
-    concurrentScriptMaximum: 10
+    concurrentScriptMaximum: 6
 };
 
 let activeProcesses = [];
