@@ -5,7 +5,7 @@
 var state = getState();
 
 function processGameTick() {
-    // print(state);
+    // lol what is this who wrote this
     let direction = 0;
 
     let bestPlayer = getNearest(state.myTank, state.tanks);
